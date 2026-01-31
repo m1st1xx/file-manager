@@ -1,0 +1,7 @@
+[Proxy Settings]
+NoProxyFor=localhost,127.0.0.0/8,::1
+ProxyType=0
+ftpProxy=http://127.0.0.1:10808
+httpProxy=http://127.0.0.1:10808
+httpsProxy=http://127.0.0.1:10808
+socksProxy=http://127.0.0.1:10808

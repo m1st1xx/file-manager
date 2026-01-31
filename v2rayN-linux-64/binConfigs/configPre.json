@@ -1,0 +1,302 @@
+{
+  "log": {
+    "level": "warn",
+    "timestamp": true
+  },
+  "dns": {
+    "servers": [
+      {
+        "server": "223.5.5.5",
+        "type": "udp",
+        "tag": "local_local"
+      },
+      {
+        "server": "cloudflare-dns.com",
+        "domain_resolver": "hosts_dns",
+        "path": "/dns-query",
+        "type": "https",
+        "tag": "remote_dns",
+        "detour": "proxy"
+      },
+      {
+        "server": "dns.alidns.com",
+        "domain_resolver": "hosts_dns",
+        "path": "/dns-query",
+        "type": "https",
+        "tag": "direct_dns"
+      },
+      {
+        "predefined": {
+          "dns.google": [
+            "8.8.8.8",
+            "8.8.4.4",
+            "2001:4860:4860::8888",
+            "2001:4860:4860::8844"
+          ],
+          "dns.alidns.com": [
+            "223.5.5.5",
+            "223.6.6.6",
+            "2400:3200::1",
+            "2400:3200:baba::1"
+          ],
+          "one.one.one.one": [
+            "1.1.1.1",
+            "1.0.0.1",
+            "2606:4700:4700::1111",
+            "2606:4700:4700::1001"
+          ],
+          "1dot1dot1dot1.cloudflare-dns.com": [
+            "1.1.1.1",
+            "1.0.0.1",
+            "2606:4700:4700::1111",
+            "2606:4700:4700::1001"
+          ],
+          "cloudflare-dns.com": [
+            "104.16.249.249",
+            "104.16.248.249",
+            "2606:4700::6810:f8f9",
+            "2606:4700::6810:f9f9"
+          ],
+          "dns.cloudflare.com": [
+            "104.16.132.229",
+            "104.16.133.229",
+            "2606:4700::6810:84e5",
+            "2606:4700::6810:85e5"
+          ],
+          "dot.pub": [
+            "1.12.12.12",
+            "120.53.53.53"
+          ],
+          "doh.pub": [
+            "1.12.12.12",
+            "120.53.53.53"
+          ],
+          "dns.quad9.net": [
+            "9.9.9.9",
+            "149.112.112.112",
+            "2620:fe::fe",
+            "2620:fe::9"
+          ],
+          "dns.yandex.net": [
+            "77.88.8.8",
+            "77.88.8.1",
+            "2a02:6b8::feed:0ff",
+            "2a02:6b8:0:1::feed:0ff"
+          ],
+          "dns.sb": [
+            "185.222.222.222",
+            "2a09::"
+          ],
+          "dns.umbrella.com": [
+            "208.67.220.220",
+            "208.67.222.222",
+            "2620:119:35::35",
+            "2620:119:53::53"
+          ],
+          "dns.sse.cisco.com": [
+            "208.67.220.220",
+            "208.67.222.222",
+            "2620:119:35::35",
+            "2620:119:53::53"
+          ],
+          "engage.cloudflareclient.com": [
+            "162.159.192.1",
+            "2606:4700:d0::a29f:c001"
+          ]
+        },
+        "type": "hosts",
+        "tag": "hosts_dns"
+      }
+    ],
+    "rules": [
+      {
+        "server": "hosts_dns",
+        "ip_accept_any": true
+      },
+      {
+        "server": "remote_dns",
+        "clash_mode": "Global"
+      },
+      {
+        "server": "direct_dns",
+        "clash_mode": "Direct"
+      },
+      {
+        "action": "predefined",
+        "rcode": "NOTIMP",
+        "query_type": [
+          64,
+          65
+        ]
+      },
+      {
+        "server": "direct_dns",
+        "rule_set": [
+          "geosite-private"
+        ]
+      }
+    ],
+    "final": "remote_dns",
+    "independent_cache": true
+  },
+  "inbounds": [
+    {
+      "type": "tun",
+      "tag": "tun-in",
+      "interface_name": "singbox_tun",
+      "address": [
+        "172.18.0.1/30"
+      ],
+      "mtu": 9000,
+      "auto_route": true,
+      "strict_route": true,
+      "stack": "gvisor"
+    }
+  ],
+  "outbounds": [
+    {
+      "server": "127.0.0.1",
+      "server_port": 10808,
+      "version": "5",
+      "type": "socks",
+      "tag": "proxy"
+    },
+    {
+      "type": "direct",
+      "tag": "direct"
+    }
+  ],
+  "route": {
+    "default_domain_resolver": {
+      "server": "direct_dns",
+      "strategy": ""
+    },
+    "auto_detect_interface": true,
+    "rules": [
+      {
+        "port": [
+          53
+        ],
+        "process_name": [
+          "v2ray",
+          "xray",
+          "mihomo-windows-amd64-v1",
+          "mihomo-windows-amd64-compatible",
+          "mihomo-windows-amd64",
+          "mihomo-linux-amd64",
+          "clash",
+          "mihomo",
+          "hysteria",
+          "naive",
+          "naiveproxy",
+          "tuic-client",
+          "tuic",
+          "juicity-client",
+          "juicity",
+          "hysteria-windows-amd64",
+          "hysteria-linux-amd64",
+          "brook_windows_amd64",
+          "brook_linux_amd64",
+          "brook",
+          "overtls-bin",
+          "overtls",
+          "shadowquic",
+          "mieru"
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "outbound": "direct",
+        "process_name": [
+          "v2ray",
+          "xray",
+          "mihomo-windows-amd64-v1",
+          "mihomo-windows-amd64-compatible",
+          "mihomo-windows-amd64",
+          "mihomo-linux-amd64",
+          "clash",
+          "mihomo",
+          "hysteria",
+          "naive",
+          "naiveproxy",
+          "tuic-client",
+          "tuic",
+          "sing-box-client",
+          "sing-box",
+          "juicity-client",
+          "juicity",
+          "hysteria-windows-amd64",
+          "hysteria-linux-amd64",
+          "brook_windows_amd64",
+          "brook_linux_amd64",
+          "brook",
+          "overtls-bin",
+          "overtls",
+          "shadowquic",
+          "mieru"
+        ]
+      },
+      {
+        "action": "sniff"
+      },
+      {
+        "protocol": [
+          "dns"
+        ],
+        "action": "hijack-dns"
+      },
+      {
+        "outbound": "direct",
+        "clash_mode": "Direct"
+      },
+      {
+        "outbound": "proxy",
+        "clash_mode": "Global"
+      },
+      {
+        "network": [
+          "udp"
+        ],
+        "port": [
+          443
+        ],
+        "action": "reject"
+      },
+      {
+        "outbound": "direct",
+        "ip_is_private": true
+      },
+      {
+        "outbound": "direct",
+        "rule_set": [
+          "geosite-private"
+        ]
+      },
+      {
+        "outbound": "proxy",
+        "port_range": [
+          "0:65535"
+        ]
+      }
+    ],
+    "rule_set": [
+      {
+        "tag": "geosite-private",
+        "type": "local",
+        "format": "binary",
+        "path": "/home/m1st/v2rayN-linux-64/bin/srss/geosite-private.srs"
+      }
+    ],
+    "final": "proxy"
+  },
+  "experimental": {
+    "cache_file": {
+      "enabled": true,
+      "path": "/home/m1st/v2rayN-linux-64/bin/cache.db",
+      "store_fakeip": false
+    },
+    "clash_api": {
+      "external_controller": "127.0.0.1:10814"
+    }
+  }
+}

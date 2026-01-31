@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg viewBox="0 0 50 50"
+ xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.2" baseProfile="tiny">
+<title>Qt SVG Document</title>
+<desc>Generated with Qt</desc>
+<defs>
+</defs>
+<g fill="none" stroke="black" stroke-width="1" fill-rule="evenodd" stroke-linecap="square" stroke-linejoin="bevel" >
+
+<g fill="#000000" fill-opacity="1" stroke="none" transform="matrix(4.97306,0,0,5.90551,-2.63158,57.8125)"
+font-family="Noto Sans" font-size="10" font-weight="400" font-style="normal" 
+opacity="0.003" >
+<rect x="0.529167" y="-9.78958" width="10.0542" height="8.46667"/>
+</g>
+
+<g fill="#000000" fill-opacity="1" stroke="none" transform="matrix(4.29492,0,0,6.74916,-79.5455,137.5)"
+font-family="Noto Sans" font-size="10" font-weight="400" font-style="normal" 
+opacity="0.003" >
+<rect x="21.4313" y="-19.5792" width="5.82083" height="5.82083"/>
+</g>
+
+<g fill="#ffffff" fill-opacity="1" stroke="none" transform="matrix(4.29492,0,0,6.74916,-79.5455,137.5)"
+font-family="Noto Sans" font-size="10" font-weight="400" font-style="normal" 
+>
+<path vector-effect="none" fill-rule="nonzero" d="M26.0072,-18.5208 C25.9597,-18.5208 25.9118,-18.503 25.8756,-18.4666 L24.3396,-16.9306 L22.8022,-18.4666 C22.7301,-18.5374 22.6145,-18.5374 22.5424,-18.4666 C22.4716,-18.3945 22.4716,-18.2789 22.5424,-18.2068 L24.0806,-16.6687 L22.5446,-15.1313 C22.4737,-15.0592 22.4737,-14.9436 22.5446,-14.8715 C22.6167,-14.8007 22.7323,-14.8007 22.8044,-14.8715 L24.3418,-16.4075 L25.8777,-14.8715 C25.9502,-14.7987 26.068,-14.7987 26.1404,-14.8715 C26.2113,-14.9436 26.2113,-15.0592 26.1404,-15.1313 L24.603,-16.6687 L26.1382,-18.2068 C26.2091,-18.2789 26.2091,-18.3945 26.1382,-18.4666 C26.102,-18.503 26.0548,-18.5208 26.0073,-18.5208 L26.0072,-18.5208"/>
+</g>
+
+<g fill="none" stroke="#000000" stroke-opacity="1" stroke-width="1" stroke-linecap="square" stroke-linejoin="bevel" transform="matrix(1,0,0,1,0,0)"
+font-family="Noto Sans" font-size="10" font-weight="400" font-style="normal" 
+>
+</g>
+</g>
+</svg>

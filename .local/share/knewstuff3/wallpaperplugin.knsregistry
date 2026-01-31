@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE khotnewstuff3>
+<hotnewstuffregistry>
+ <stuff category="715">
+  <name>Live Wallpaper Snow</name>
+  <providerid>api.kde-look.org</providerid>
+  <author>mft</author>
+  <homepage>https://store.kde.org/p/2151253</homepage>
+  <licence></licence>
+  <version>1.0.1</version>
+  <rating>50</rating>
+  <downloads>19938</downloads>
+  <installedfile>/home/m1st/.local/share/plasma/wallpapers/org.kde.snow/</installedfile>
+  <id>2151253</id>
+  <releasedate>2024-05-06</releasedate>
+  <summary>&lt;p>Snowfall Live Wallpaper for KDE Plasma 6&lt;/p></summary>
+  <changelog></changelog>
+  <preview>https://images.pling.com/cache/770x540-4/img/00/00/22/27/33/2151253/logo1.png</preview>
+  <previewBig>https://images.pling.com/cache/770x540-4/img/00/00/22/27/33/2151253/logo1.png</previewBig>
+  <payload>https://files06.pling.com/api/files/download/j/eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6MTcxNDk3NDU1NSwibyI6IjEiLCJzIjoiYjI2ZDU1ZGNiZGMzYTgxZjU1ZjM1NmU0MGM2Y2M4YTA1NmM1MTU0MWM3MGRmZmZiZjdhMTM2MGI0YzA2ZDg3N2FiOTg4MTM2ZTk4OTFlY2ZlNWNmNjEyMmE1YzZkNGUyZjFjYzgzZDMwOTliYWY0MDZkYjJkMjdmZWZhYTAyYjkiLCJ0IjoxNzY5MTA4NTk4LCJzdGZwIjpudWxsLCJzdGlwIjoiMTQ4LjI1My4yMTUuMTU5In0.mM85zsCddIGr-9uns77rkhK61Dl6csDdFP5y4DDiDa4/snow-1.0.1.tar.gz</payload>
+  <tags>extension,gplv2-later,plasma,plasma##majorversion=6,original-product,unix,wallpaper,linux,kde,wallpaper-plugin</tags>
+  <status>installed</status>
+ </stuff>
+</hotnewstuffregistry>

@@ -1,0 +1,75 @@
+2026-01-23 13:38:04.4033-INFO v2rayN start up | v2rayN - V7.16.6 - X64 | /home/m1st/v2rayN-linux-64/ | /home/m1st/v2rayN-linux-64/v2rayN | Unix 6.18.6.1
+2026-01-23 13:38:05.6144-DEBUG GetCliWrapOutput,Failed to start a process with file path '/home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh'. Target file or working directory doesn't exist, the provided credentials are invalid, or the resource policy cannot be set due to insufficient permissions. See the inner exception for more information.
+2026-01-23 13:38:05.6331-DEBUG    at CliWrap.Utils.ProcessEx.Start(Action`1 configureProcess) in /_/CliWrap/Utils/ProcessEx.cs:line 79
+   at CliWrap.Command.ExecuteAsync(Action`1 configureStartInfo, Action`1 configureProcess, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 322
+   at CliWrap.Command.ExecuteAsync(CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 378
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 44
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 95
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding encoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 116
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 132
+   at ServiceLib.Common.Utils.GetCliWrapOutput(String filePath, IEnumerable`1 args) in /home/runner/work/v2rayN/v2rayN/v2rayN/ServiceLib/Common/Utils.cs:line 780
+2026-01-23 13:38:05.6331-ERROR System.ComponentModel.Win32Exception: ErrorStartingProcess, /home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh, /home/m1st, Permission denied
+2026-01-23 13:38:05.7049-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/AmazTool
+2026-01-23 13:38:05.7049-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/xray/xray
+2026-01-23 13:38:05.7051-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/mihomo/mihomo
+2026-01-23 13:38:05.7051-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/sing_box/sing-box
+2026-01-23 13:38:05.7072-INFO Setup Scheduled Tasks
+2026-01-23 13:38:06.2968-DEBUG GetCliWrapOutput,Failed to start a process with file path '/home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh'. Target file or working directory doesn't exist, the provided credentials are invalid, or the resource policy cannot be set due to insufficient permissions. See the inner exception for more information.
+2026-01-23 13:38:06.2968-DEBUG    at CliWrap.Utils.ProcessEx.Start(Action`1 configureProcess) in /_/CliWrap/Utils/ProcessEx.cs:line 79
+   at CliWrap.Command.ExecuteAsync(Action`1 configureStartInfo, Action`1 configureProcess, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 322
+   at CliWrap.Command.ExecuteAsync(CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 378
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 44
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 95
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding encoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 116
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 132
+   at ServiceLib.Common.Utils.GetCliWrapOutput(String filePath, IEnumerable`1 args) in /home/runner/work/v2rayN/v2rayN/v2rayN/ServiceLib/Common/Utils.cs:line 780
+2026-01-23 13:38:06.2968-ERROR System.ComponentModel.Win32Exception: ErrorStartingProcess, /home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh, /home/m1st, Permission denied
+2026-01-23 13:48:23.9660-INFO OnClosing -> ApplicationShutdown
+2026-01-23 13:48:23.9667-INFO AppExitAsync Begin
+2026-01-23 13:48:23.9674-DEBUG GetCliWrapOutput,Failed to start a process with file path '/home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh'. Target file or working directory doesn't exist, the provided credentials are invalid, or the resource policy cannot be set due to insufficient permissions. See the inner exception for more information.
+2026-01-23 13:48:23.9674-DEBUG    at CliWrap.Utils.ProcessEx.Start(Action`1 configureProcess) in /_/CliWrap/Utils/ProcessEx.cs:line 79
+   at CliWrap.Command.ExecuteAsync(Action`1 configureStartInfo, Action`1 configureProcess, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 322
+   at CliWrap.Command.ExecuteAsync(CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 378
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 44
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 95
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding encoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 116
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 132
+   at ServiceLib.Common.Utils.GetCliWrapOutput(String filePath, IEnumerable`1 args) in /home/runner/work/v2rayN/v2rayN/v2rayN/ServiceLib/Common/Utils.cs:line 780
+2026-01-23 13:48:23.9674-ERROR System.ComponentModel.Win32Exception: ErrorStartingProcess, /home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh, /home/m1st, Permission denied
+2026-01-23 19:06:22.0792-INFO v2rayN start up | v2rayN - V7.16.6 - X64 | /home/m1st/v2rayN-linux-64/ | /home/m1st/v2rayN-linux-64/v2rayN | Unix 6.18.6.1
+2026-01-23 19:06:23.3030-DEBUG GetCliWrapOutput,Failed to start a process with file path '/home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh'. Target file or working directory doesn't exist, the provided credentials are invalid, or the resource policy cannot be set due to insufficient permissions. See the inner exception for more information.
+2026-01-23 19:06:23.3223-DEBUG    at CliWrap.Utils.ProcessEx.Start(Action`1 configureProcess) in /_/CliWrap/Utils/ProcessEx.cs:line 79
+   at CliWrap.Command.ExecuteAsync(Action`1 configureStartInfo, Action`1 configureProcess, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 322
+   at CliWrap.Command.ExecuteAsync(CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 378
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 44
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 95
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding encoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 116
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 132
+   at ServiceLib.Common.Utils.GetCliWrapOutput(String filePath, IEnumerable`1 args) in /home/runner/work/v2rayN/v2rayN/v2rayN/ServiceLib/Common/Utils.cs:line 780
+2026-01-23 19:06:23.3228-ERROR System.ComponentModel.Win32Exception: ErrorStartingProcess, /home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh, /home/m1st, Permission denied
+2026-01-23 19:06:23.5983-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/AmazTool
+2026-01-23 19:06:23.5985-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/xray/xray
+2026-01-23 19:06:23.5985-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/mihomo/mihomo
+2026-01-23 19:06:23.5985-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/sing_box/sing-box
+2026-01-23 19:06:23.5999-INFO Setup Scheduled Tasks
+2026-01-23 19:06:24.1347-DEBUG GetCliWrapOutput,Failed to start a process with file path '/home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh'. Target file or working directory doesn't exist, the provided credentials are invalid, or the resource policy cannot be set due to insufficient permissions. See the inner exception for more information.
+2026-01-23 19:06:24.1347-DEBUG    at CliWrap.Utils.ProcessEx.Start(Action`1 configureProcess) in /_/CliWrap/Utils/ProcessEx.cs:line 79
+   at CliWrap.Command.ExecuteAsync(Action`1 configureStartInfo, Action`1 configureProcess, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 322
+   at CliWrap.Command.ExecuteAsync(CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 378
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 44
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 95
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding encoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 116
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 132
+   at ServiceLib.Common.Utils.GetCliWrapOutput(String filePath, IEnumerable`1 args) in /home/runner/work/v2rayN/v2rayN/v2rayN/ServiceLib/Common/Utils.cs:line 780
+2026-01-23 19:06:24.1347-ERROR System.ComponentModel.Win32Exception: ErrorStartingProcess, /home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh, /home/m1st, Permission denied
+2026-01-23 19:06:35.0893-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/binConfigs/run_as_sudo.sh
+2026-01-23 19:06:35.1010-DEBUG GetCliWrapOutput,Failed to start a process with file path '/home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh'. Target file or working directory doesn't exist, the provided credentials are invalid, or the resource policy cannot be set due to insufficient permissions. See the inner exception for more information.
+2026-01-23 19:06:35.1010-DEBUG    at CliWrap.Utils.ProcessEx.Start(Action`1 configureProcess) in /_/CliWrap/Utils/ProcessEx.cs:line 79
+   at CliWrap.Command.ExecuteAsync(Action`1 configureStartInfo, Action`1 configureProcess, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 322
+   at CliWrap.Command.ExecuteAsync(CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Command.Execution.cs:line 378
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken forcefulCancellationToken, CancellationToken gracefulCancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 44
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding standardOutputEncoding, Encoding standardErrorEncoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 95
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, Encoding encoding, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 116
+   at CliWrap.Buffered.BufferedCommandExtensions.ExecuteBufferedAsync(Command command, CancellationToken cancellationToken) in /_/CliWrap/Buffered/BufferedCommandExtensions.cs:line 132
+   at ServiceLib.Common.Utils.GetCliWrapOutput(String filePath, IEnumerable`1 args) in /home/runner/work/v2rayN/v2rayN/v2rayN/ServiceLib/Common/Utils.cs:line 780
+2026-01-23 19:06:35.1010-ERROR System.ComponentModel.Win32Exception: ErrorStartingProcess, /home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh, /home/m1st, Permission denied

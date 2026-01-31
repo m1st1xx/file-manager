@@ -1,0 +1,1214 @@
+//-- Urchin Tracking Module 6.1 (UTM 6.1) $Revision: 1.24 $
+//-- Copyright 2004 Urchin Software Corporation, All Rights Reserved.
+
+//-- Urchin On Demand Settings ONLY
+var _uacct="";			// set up the Urchin Account
+var _userv=0;			// service mode (0=local,1=remote,2=both)
+
+//-- UTM User Settings
+var _ufsc=1;			// set client info flag (1=on|0=off)
+var _udn="auto";		// (auto|none|domain) set the domain name for cookies
+var _uhash="on";		// (on|off) unique domain hash for cookies
+var _utimeout="1800";   	// set the inactive session timeout in seconds
+var _ugifpath="/__utm.gif";	// set the web path to the __utm.gif file
+var _utsp="|";			// transaction field separator
+var _uflash=1;			// set flash version detect option (1=on|0=off)
+var _utitle=1;			// set the document title detect option (1=on|0=off)
+
+//-- UTM Campaign Tracking Settings
+var _uctm=1;			// set campaign tracking module (1=on|0=off)
+var _ucto="15768000";		// set timeout in seconds (6 month default)
+var _uccn="utm_campaign";	// name
+var _ucmd="utm_medium";		// medium (cpc|cpm|link|email|organic)
+var _ucsr="utm_source";		// source
+var _uctr="utm_term";		// term/keyword
+var _ucct="utm_content";	// content
+var _ucid="utm_id";		// id number
+var _ucno="utm_nooverride";	// don't override
+
+//-- Auto/Organic Sources and Keywords
+var _uOsr=new Array();
+var _uOkw=new Array();
+_uOsr[0]="google";	_uOkw[0]="q";
+_uOsr[1]="yahoo";	_uOkw[1]="p";
+_uOsr[2]="msn";		_uOkw[2]="q";
+_uOsr[3]="aol";		_uOkw[3]="query";
+_uOsr[4]="lycos";	_uOkw[4]="query";
+_uOsr[5]="ask";		_uOkw[5]="q";
+_uOsr[6]="altavista";	_uOkw[6]="q";
+_uOsr[7]="search";	_uOkw[7]="q";
+_uOsr[8]="netscape";	_uOkw[8]="query";
+_uOsr[9]="earthlink";	_uOkw[9]="q";
+_uOsr[10]="cnn";	_uOkw[10]="query";
+_uOsr[11]="looksmart";	_uOkw[11]="key";
+_uOsr[12]="about";	_uOkw[12]="terms";
+_uOsr[13]="excite";	_uOkw[13]="qkw";
+_uOsr[14]="mamma";	_uOkw[14]="query";
+_uOsr[15]="alltheweb";	_uOkw[15]="q";
+_uOsr[16]="gigablast";	_uOkw[16]="q";
+_uOsr[17]="voila";	_uOkw[17]="kw";
+_uOsr[18]="virgilio";	_uOkw[18]="qs";
+_uOsr[19]="teoma";	_uOkw[19]="q";
+
+//-- Auto/Organic Keywords to Ignore
+var _uOno=new Array();
+//_uOno[0]="urchin";
+//_uOno[1]="urchin.com";
+//_uOno[2]="www.urchin.com";
+
+//-- Referral domains to Ignore
+var _uRno=new Array();
+//_uRno[0]=".urchin.com";
+
+//-- **** Don't modify below this point ***
+var _uff,_udh,_udt,_udo="",_uu,_ufns=0,_uns=0,_ur="-",_ufno=0,_ust=0,_ujv="-",_ubd=document,_udl=_ubd.location,_uwv="6.1";
+var _ugifpath2="http://service.urchin.com/__utm.gif";
+if (_udl.protocol=="https:") _ugifpath2="https://service.urchin.com/__utm.gif";
+function urchinTracker(page) {
+ if (_udl.protocol=="file:") return;
+ if (_uff && (!page || page=="")) return;
+ var a,b,c,v,x="",s="",f=0;
+ var nx=" expires=Sun, 18 Jan 2038 00:00:00 GMT;";
+ var dc=_ubd.cookie;
+ _udh=_uDomain();
+ _uu=Math.round(Math.random()*2147483647);
+ _udt=new Date();
+ _ust=Math.round(_udt.getTime()/1000);
+ a=dc.indexOf("__utma="+_udh);
+ b=dc.indexOf("__utmb="+_udh);
+ c=dc.indexOf("__utmc="+_udh);
+ if (_udn && _udn!="") { _udo=" domain="+_udn+";"; }
+ if (_utimeout && _utimeout!="") {
+  x=new Date(_udt.getTime()+(_utimeout*1000));
+  x=" expires="+x.toGMTString()+";";
+ }
+ s=_udl.search;
+ if(s && s!="" && s.indexOf("__utma=")>=0) {
+  a=_uGC(s,"__utma=","&");
+  b=_uGC(s,"__utmb=","&");
+  c=_uGC(s,"__utmc=","&");
+  if (a!="-" && b!="-" && c!="-") f=1;
+  else if(a!="-") f=2;
+ }
+ if(f==1) {
+  _ubd.cookie="__utma="+a+"; path=/;"+nx;
+  _ubd.cookie="__utmb="+b+"; path=/;"+x;
+  _ubd.cookie="__utmc="+c+"; path=/;";
+ } else if (f==2) {
+  a=_uFixA(s,"&",_ust);
+  _ubd.cookie="__utma="+a+"; path=/;"+nx;
+  _ubd.cookie="__utmb="+_udh+"; path=/;"+x;
+  _ubd.cookie="__utmc="+_udh+"; path=/;";
+  _ufns=1;
+ } else if (a>=0 && b>=0 && c>=0) {
+  _ubd.cookie="__utmb="+_udh+"; path=/;"+x+_udo;
+ } else {
+  if (a>=0) a=_uFixA(_ubd.cookie,";",_ust);
+  else a=_udh+"."+_uu+"."+_ust+"."+_ust+"."+_ust+".1";
+  _ubd.cookie="__utma="+a+"; path=/;"+nx+_udo;
+  _ubd.cookie="__utmb="+_udh+"; path=/;"+x+_udo;
+  _ubd.cookie="__utmc="+_udh+"; path=/;"+_udo;
+  _ufns=1;
+ }
+ if (s && s!="" && s.indexOf("__utmv=")>=0) {
+  if ((v=_uGC(s,"__utmv=","&"))!="-") {
+   _ubd.cookie="__utmv="+unescape(v)+"; path=/;"+nx+_udo;
+  }
+ }
+ _uInfo(page);
+ _ufns=0;
+ _ufno=0;
+ _uff=1;
+}
+urchinTracker();
+function _uInfo(page) {
+ var p,s="",pg=_udl.pathname+_udl.search;
+ if (page && page!="") pg=escape(page);
+ _ur=_ubd.referrer;
+ if (!_ur || _ur=="") { _ur="-"; }
+ else {
+  p=_ur.indexOf(_ubd.domain);
+  if ((p>=0) && (p<=8)) { _ur="0"; }
+  if (_ur.indexOf("[")==0 && _ur.lastIndexOf("]")==(_ur.length-1)) { _ur="-"; }
+ }
+ s+="&utmn="+_uu;
+ if (_ufsc) s+=_uBInfo(page);
+ if (_uctm && (!page || page=="")) s+=_uCInfo();
+ if (_utitle && _ubd.title && _ubd.title!="") s+="&utmdt="+escape(_ubd.title);
+ if (_udl.hostname && _udl.hostname!="") s+="&utmhn="+escape(_udl.hostname);
+ if (!page || page=="") s+="&utmr="+_ur;
+ s+="&utmp="+pg;
+ if (_userv==0 || _userv==2) {
+  var i=new Image(1,1);
+  i.src=_ugifpath+"?"+"utmwv="+_uwv+s;
+  i.onload=function() {_uVoid();}
+ }
+ if (_userv==1 || _userv==2) {
+  var i2=new Image(1,1);
+  i2.src=_ugifpath2+"?"+"utmwv="+_uwv+s+"&utmac="+_uacct+"&utmcc="+_uGCS();
+  i2.onload=function() { _uVoid(); }
+ }
+ return;
+}
+function _uVoid() { return; }
+function _uCInfo() {
+ if (!_ucto || _ucto=="") { _ucto="15768000"; }
+ var c="",t="-",t2="-",o=0,cs=0,cn=0;i=0;
+ var s=_udl.search;
+ var z=_uGC(s,"__utmz=","&");
+ var x=new Date(_udt.getTime()+(_ucto*1000));
+ var dc=_ubd.cookie;
+ x=" expires="+x.toGMTString()+";";
+ if (z!="-") { _ubd.cookie="__utmz="+unescape(z)+"; path=/;"+x+_udo; return ""; }
+ z=dc.indexOf("__utmz="+_udh);
+ if (z>-1) { z=_uGC(dc,"__utmz="+_udh,";"); }
+ else { z="-"; }
+ t=_uGC(s,_ucid+"=","&");
+ t2=_uGC(s,_ucsr+"=","&");
+ if ((t!="-" && t!="") || (t2!="-" && t2!="")) {
+  if (t!="-" && t!="") { c+="utmcid="+_uEC(t); if (t2!="-" && t2!="") c+="|utmcsr="+_uEC(t2);
+  } else { if (t2!="-" && t2!="") c+="utmcsr="+_uEC(t2); }
+  t=_uGC(s,_uccn+"=","&");
+  if (t!="-" && t!="") c+="|utmccn="+_uEC(t);
+  else c+="|utmccn=(not+set)";
+  t=_uGC(s,_ucmd+"=","&");
+  if (t!="-" && t!="") c+="|utmcmd="+_uEC(t);
+  else  c+="|utmcmd=(not+set)";
+  t=_uGC(s,_uctr+"=","&");
+  if (t!="-" && t!="") c+="|utmctr="+_uEC(t);
+  else { t=_uOrg(1); if (t!="-" && t!="") c+="|utmctr="+_uEC(t); }
+  t=_uGC(s,_ucct+"=","&");
+  if (t!="-" && t!="") c+="|utmcct="+_uEC(t);
+  t=_uGC(s,_ucno+"=","&");
+  if (t=="1") o=1;
+  if (z!="-" && o==1) return "";
+ }
+ if (c=="-" || c=="") { c=_uOrg(); if (z!="-" && _ufno==1)  return ""; }
+ if (c=="-" || c=="") { if (_ufns==1)  c=_uRef(); if (z!="-" && _ufno==1)  return ""; }
+ if (c=="-" || c=="") {
+  if (z=="-" && _ufns==1) { c="utmccn=(direct)|utmcsr=(direct)|utmcmd=(none)"; }
+  if (c=="-" || c=="") return "";
+ }
+ if (z!="-") {
+  i=z.indexOf(".");
+  if (i>-1) i=z.indexOf(".",i+1);
+  if (i>-1) i=z.indexOf(".",i+1);
+  if (i>-1) i=z.indexOf(".",i+1);
+  t=z.substring(i+1,z.length);
+  if (t.toLowerCase()==c.toLowerCase()) cs=1;
+  t=z.substring(0,i);
+  if ((i=t.lastIndexOf(".")) > -1) {
+   t=t.substring(i+1,t.length);
+   cn=(t*1);
+  }
+ }
+ if (cs==0 || _ufns==1) {
+  t=_uGC(dc,"__utma="+_udh,";");
+  if ((i=t.lastIndexOf(".")) > 9) {
+   _uns=t.substring(i+1,t.length);
+   _uns=(_uns*1);
+  }
+  cn++;
+  if (_uns==0) _uns=1;
+  _ubd.cookie="__utmz="+_udh+"."+_ust+"."+_uns+"."+cn+"."+c+"; path=/; "+x+_udo;
+ }
+ if (cs==0 || _ufns==1) return "&utmcn=1";
+ else return "&utmcr=1";
+}
+function _uRef() {
+ if (_ur=="0" || _ur=="" || _ur=="-") return "";
+ var i=0,h,k,n;
+ if ((i=_ur.indexOf("://"))<0) return "";
+ h=_ur.substring(i+3,_ur.length);
+ if (h.indexOf("/") > -1) {
+  k=h.substring(h.indexOf("/"),h.length);
+  if (k.indexOf("?") > -1) k=k.substring(0,k.indexOf("?"));
+  h=h.substring(0,h.indexOf("/"));
+ }
+ h=h.toLowerCase();
+ n=h;
+ if ((i=n.indexOf(":")) > -1) n=n.substring(0,i);
+ for (var ii=0;ii<_uRno.length;ii++) {
+  if ((i=n.indexOf(_uRno[ii].toLowerCase())) > -1 && n.length==(i+_uRno[ii].length)) { _ufno=1; break; }
+ }
+ if (h.indexOf("www.")==0) h=h.substring(4,h.length);
+ return "utmccn=(referral)|utmcsr="+_uEC(h)+"|"+"utmcct="+_uEC(k)+"|utmcmd=referral";
+}
+function _uOrg(t) {
+ if (_ur=="0" || _ur=="" || _ur=="-") return "";
+ var i=0,h,k;
+ if ((i=_ur.indexOf("://")) < 0) return "";
+ h=_ur.substring(i+3,_ur.length);
+ if (h.indexOf("/") > -1) {
+  h=h.substring(0,h.indexOf("/"));
+ }
+ for (var ii=0;ii<_uOsr.length;ii++) {
+  if (h.indexOf(_uOsr[ii]) > -1) {
+   if ((i=_ur.indexOf("?"+_uOkw[ii]+"=")) > -1 || (i=_ur.indexOf("&"+_uOkw[ii]+"=")) > -1) {
+    k=_ur.substring(i+_uOkw[ii].length+2,_ur.length);
+    if ((i=k.indexOf("&")) > -1) k=k.substring(0,i);
+    for (var yy=0;yy<_uOno.length;yy++) {
+     if (_uOno[yy].toLowerCase()==k.toLowerCase()) { _ufno=1; break; }
+    }
+    if (t) return _uEC(k);
+    else return "utmccn=(organic)|utmcsr="+_uEC(_uOsr[ii])+"|"+"utmctr="+_uEC(k)+"|utmcmd=organic";
+   }
+  }
+ }
+ return "";
+}
+function _uBInfo(page) {
+ var sr="-",sc="-",ul="-",fl="-",je=1;
+ var n=navigator;
+ if (self.screen) {
+  sr=screen.width+"x"+screen.height;
+  sc=screen.colorDepth+"-bit";
+ } else if (self.java) {
+  var j=java.awt.Toolkit.getDefaultToolkit();
+  var s=j.getScreenSize();
+  sr=s.width+"x"+s.height;
+ }
+ if (_ujv=="-" && (!page || page=="")) {
+  for (var i=5;i>=0;i--) {
+   var t="<script language='JavaScript1."+i+"'>_ujv='1."+i+"';</script>";
+   _ubd.write(t);
+   if (_ujv!="-") break;
+  }
+ }
+ if (n.language) { ul=n.language.toLowerCase(); }
+ else if (n.browserLanguage) { ul=n.browserLanguage.toLowerCase(); }
+ je=n.javaEnabled()?1:0;
+ if (_uflash) fl=_uFlash();
+ return "&utmsr="+sr+"&utmsc="+sc+"&utmul="+ul+"&utmje="+je+"&utmjv="+_ujv+"&utmfl="+fl;
+}
+function __utmSetTrans() {
+ var e;
+ if (_ubd.getElementById) e=_ubd.getElementById("utmtrans");
+ else if (_ubd.utmform && _ubd.utmform.utmtrans) e=_ubd.utmform.utmtrans;
+ if (!e) return;
+ var l=e.value.split("UTM:");
+ var i,i2,c;
+ if (_userv==0 || _userv==2) i=new Array();
+ if (_userv==1 || _userv==2) { i2=new Array(); c=_uGCS(); }
+
+ for (var ii=0;ii<l.length;ii++) {
+  l[ii]=_uTrim(l[ii]);
+  if (l[ii].charAt(0)!='T' && l[ii].charAt(0)!='I') continue;
+  var r=Math.round(Math.random()*2147483647);
+  if (!_utsp || _utsp=="") _utsp="|";
+  var f=l[ii].split(_utsp),s="";
+  if (f[0].charAt(0)=='T') {
+   s="&utmt=tran"+"&utmn="+r;
+   f[1]=_uTrim(f[1]); if(f[1]&&f[1]!="") s+="&utmtid="+escape(f[1]);
+   f[2]=_uTrim(f[2]); if(f[2]&&f[2]!="") s+="&utmtst="+escape(f[2]);
+   f[3]=_uTrim(f[3]); if(f[3]&&f[3]!="") s+="&utmtto="+escape(f[3]);
+   f[4]=_uTrim(f[4]); if(f[4]&&f[4]!="") s+="&utmttx="+escape(f[4]);
+   f[5]=_uTrim(f[5]); if(f[5]&&f[5]!="") s+="&utmtsp="+escape(f[5]);
+   f[6]=_uTrim(f[6]); if(f[6]&&f[6]!="") s+="&utmtci="+escape(f[6]);
+   f[7]=_uTrim(f[7]); if(f[7]&&f[7]!="") s+="&utmtrg="+escape(f[7]);
+   f[8]=_uTrim(f[8]); if(f[8]&&f[8]!="") s+="&utmtco="+escape(f[8]);
+  } else {
+   s="&utmt=item"+"&utmn="+r;
+   f[1]=_uTrim(f[1]); if(f[1]&&f[1]!="") s+="&utmtid="+escape(f[1]);
+   f[2]=_uTrim(f[2]); if(f[2]&&f[2]!="") s+="&utmipc="+escape(f[2]);
+   f[3]=_uTrim(f[3]); if(f[3]&&f[3]!="") s+="&utmipn="+escape(f[3]);
+   f[4]=_uTrim(f[4]); if(f[4]&&f[4]!="") s+="&utmiva="+escape(f[4]);
+   f[5]=_uTrim(f[5]); if(f[5]&&f[5]!="") s+="&utmipr="+escape(f[5]);
+   f[6]=_uTrim(f[6]); if(f[6]&&f[6]!="") s+="&utmiqt="+escape(f[6]);
+  }
+  if (_userv==0 || _userv==2) {
+   i[ii]=new Image(1,1);
+   i[ii].src=_ugifpath+"?"+"utmwv="+_uwv+s;
+   i[ii].onload=function() { _uVoid(); }
+  }
+  if (_userv==1 || _userv==2) {
+   i2[ii]=new Image(1,1);
+   i2[ii].src=_ugifpath2+"?"+"utmwv="+_uwv+s+"&utmac="+_uacct+"&utmcc="+c;
+   i2[ii].onload=function() { _uVoid(); }
+  }
+ }
+ return;
+}
+function _uFlash() {
+ var f="-",n=navigator;
+ if (n.plugins && n.plugins.length) {
+  for (var ii=0;ii<n.plugins.length;ii++) {
+   if (n.plugins[ii].name.indexOf('Shockwave Flash')!=-1) {
+    f=n.plugins[ii].description.split('Shockwave Flash ')[1];
+    break;
+   }
+  }
+ } else if (window.ActiveXObject) {
+  for (var ii=10;ii>=2;ii--) {
+   try {
+    var fl=eval("new ActiveXObject('ShockwaveFlash.ShockwaveFlash."+ii+"');");
+    if (fl) { f=ii + '.0'; break; }
+   }
+   catch(e) {}
+  }
+ }
+ return f;
+}
+function __utmLinker(l) {
+ var p,a="-",b="-",c="-",z="-",v="-";
+ var dc=_ubd.cookie;
+ if (l && l!="") {
+  if (dc) {
+   a=_uGC(dc,"__utma="+_udh,";");
+   b=_uGC(dc,"__utmb="+_udh,";");
+   c=_uGC(dc,"__utmc="+_udh,";");
+   z=_uGC(dc,"__utmz="+_udh,";");
+   v=_uGC(dc,"__utmv="+_udh,";");
+   p="__utma="+a+"&__utmb="+b+"&__utmc="+c+"&__utmz="+escape(z)+"&__utmv="+escape(v);
+  }
+  if (p) {
+   if (l.indexOf("?")<=-1) { document.location=l+"?"+p; }
+   else { document.location=l+"&"+p; }
+  } else { document.location=l; }
+ }
+}
+function __utmLinkPost(f) {
+ var p,a="-",b="-",c="-",z="-",v="-";
+ var dc=_ubd.cookie;
+ if (!f || !f.action) return;
+ if (dc) {
+  a=_uGC(dc,"__utma="+_udh,";");
+  b=_uGC(dc,"__utmb="+_udh,";");
+  c=_uGC(dc,"__utmc="+_udh,";");
+  z=_uGC(dc,"__utmz="+_udh,";");
+  v=_uGC(dc,"__utmv="+_udh,";");
+  p="__utma="+a+"&__utmb="+b+"&__utmc="+c+"&__utmz="+escape(z)+"&__utmv="+escape(v);
+ }
+ if (p) {
+  if (f.action.indexOf("?")<=-1) f.action+="?"+p;
+  else f.action+="&"+p;
+ }
+ return;
+}
+function __utmSetVar(v) {
+ if (!v || v=="") return;
+ var r=Math.round(Math.random() * 2147483647);
+ _ubd.cookie="__utmv="+_udh+"."+escape(v)+"; path=/; expires=Sun, 18 Jan 2038 00:00:00 GMT;"+_udo;
+ var s="&utmt=var&utmn="+r;
+ if (_userv==0 || _userv==2) {
+  var i=new Image(1,1);
+  i.src=_ugifpath+"?"+"utmwv="+_uwv+s;
+  i.onload=function() { _uVoid(); }
+ }
+ if (_userv==1 || _userv==2) {
+  var i2=new Image(1,1);
+  i2.src=_ugifpath2+"?"+"utmwv="+_uwv+s+"&utmac="+_uacct+"&utmcc="+_uGCS();
+  i2.onload=function() { _uVoid(); }
+ }
+}
+function _uGCS() {
+ var t,c="",dc=_ubd.cookie;
+ if ((t=_uGC(dc,"__utma="+_udh,";"))!="-") c+=escape("__utma="+t+";+");
+ if ((t=_uGC(dc,"__utmb="+_udh,";"))!="-") c+=escape("__utmb="+t+";+");
+ if ((t=_uGC(dc,"__utmc="+_udh,";"))!="-") c+=escape("__utmc="+t+";+");
+ if ((t=_uGC(dc,"__utmz="+_udh,";"))!="-") c+=escape("__utmz="+t+";+");
+ if ((t=_uGC(dc,"__utmv="+_udh,";"))!="-") c+=escape("__utmv="+t+";");
+ if (c.charAt(c.length-1)=="+") c=c.substring(0,c.length-1);
+ return c;
+}
+function _uGC(l,n,s) {
+ if (!l || l=="" || !n || n=="" || !s || s=="") return "-";
+ var i,i2,i3,c="-";
+ i=l.indexOf(n);
+ i3=n.indexOf("=")+1;
+ if (i > -1) {
+  i2=l.indexOf(s,i); if (i2 < 0) { i2=l.length; }
+  c=l.substring((i+i3),i2);
+ }
+ return c;
+}
+function _uDomain() {
+ if (!_udn || _udn=="" || _udn=="none") { _udn=""; return 1; }
+ if (_udn=="auto") {
+  var d=_ubd.domain;
+  if (d.substring(0,4)=="www.") {
+   d=d.substring(4,d.length);
+  }
+  _udn=d;
+ }
+ if (_uhash=="off") return 1;
+ return _uHash(_udn);
+}
+function _uHash(d) {
+ if (!d || d=="") return 1;
+ var h=0,g=0;
+ for (var i=d.length-1;i>=0;i--) {
+  var c=parseInt(d.charCodeAt(i));
+  h=((h << 6) & 0xfffffff) + c + (c << 14);
+  if ((g=h & 0xfe00000)!=0) h=(h ^ (g >> 21));
+ }
+ return h;
+}
+function _uFixA(c,s,t) {
+ if (!c || c=="" || !s || s=="" || !t || t=="") return "-";
+ var a=_uGC(c,"__utma="+_udh,s);
+ var lt=0,i=0;
+ if ((i=a.lastIndexOf(".")) > 9) {
+  _uns=a.substring(i+1,a.length);
+  _uns=(_uns*1)+1;
+  a=a.substring(0,i);
+  if ((i=a.lastIndexOf(".")) > 7) {
+   lt=a.substring(i+1,a.length);
+   a=a.substring(0,i);
+  }
+  if ((i=a.lastIndexOf(".")) > 5) {
+   a=a.substring(0,i);
+  }
+  a+="."+lt+"."+t+"."+_uns;
+ }
+ return a;
+}
+function _uTrim(s) {
+  if (!s || s=="") return "";
+  while ((s.charAt(0)==' ') || (s.charAt(0)=='\n') || (s.charAt(0,1)=='\r')) s=s.substring(1,s.length);
+  while ((s.charAt(s.length-1)==' ') || (s.charAt(s.length-1)=='\n') || (s.charAt(s.length-1)=='\r')) s=s.substring(0,s.length-1);
+  return s;
+}
+
+function _uEC(s) {
+  var n="";
+  if (!s || s=="") return "";
+  for (var i=0;i<s.length;i++) {if (s.charAt(i)==" ") n+="+"; else n+=s.charAt(i);}
+  return n;
+}
+
+function __utmVisitorCode() {
+ var r=0,t=0,i=0,i2=0,m=31;
+ var a=_uGC(_ubd.cookie,"__utma="+_udh,";");
+ if ((i=a.indexOf(".",0))<0) return;
+ if ((i2=a.indexOf(".",i+1))>0) r=a.substring(i+1,i2); else return "";  
+ if ((i=a.indexOf(".",i2+1))>0) t=a.substring(i2+1,i); else return "";  
+ var c=new Array('A','B','C','D','E','F','G','H','J','K','L','M','N','P','R','S','T','U','V','W','X','Y','Z','1','2','3','4','5','6','7','8','9');
+ return c[r>>28&m]+c[r>>23&m]+c[r>>18&m]+c[r>>13&m]+"-"+c[r>>8&m]+c[r>>3&m]+c[((r&7)<<2)+(t>>30&3)]+c[t>>25&m]+c[t>>20&m]+"-"+c[t>>15&m]+c[t>>10&m]+c[t>>5&m]+c[t&m];
+}
+        ,Ä  x,ÄÓ;   20260116180059-8lÄ  wŸ7‹#   https://freedns.afraid.org/__utm.js      ø?  //-- Urchin Tracking Module 6.1 (UTM 6.1) $Revision: 1.24 $
+//-- Copyright 2004 Urchin Software Corporation, All Rights Reserved.
+
+//-- Urchin On Demand Settings ONLY
+var _uacct="";			// set up the Urchin Account
+var _userv=0;			// service mode (0=local,1=remote,2=both)
+
+//-- UTM User Settings
+var _ufsc=1;			// set client info flag (1=on|0=off)
+var _udn="auto";		// (auto|none|domain) set the domain name for cookies
+var _uhash="on";		// (on|off) unique domain hash for cookies
+var _utimeout="1800";   	// set the inactive session timeout in seconds
+var _ugifpath="/__utm.gif";	// set the web path to the __utm.gif file
+var _utsp="|";			// transaction field separator
+var _uflash=1;			// set flash version detect option (1=on|0=off)
+var _utitle=1;			// set the document title detect option (1=on|0=off)
+
+//-- UTM Campaign Tracking Settings
+var _uctm=1;			// set campaign tracking module (1=on|0=off)
+var _ucto="15768000";		// set timeout in seconds (6 month default)
+var _uccn="utm_campaign";	// name
+var _ucmd="utm_medium";		// medium (cpc|cpm|link|email|organic)
+var _ucsr="utm_source";		// source
+var _uctr="utm_term";		// term/keyword
+var _ucct="utm_content";	// content
+var _ucid="utm_id";		// id number
+var _ucno="utm_nooverride";	// don't override
+
+//-- Auto/Organic Sources and Keywords
+var _uOsr=new Array();
+var _uOkw=new Array();
+_uOsr[0]="google";	_uOkw[0]="q";
+_uOsr[1]="yahoo";	_uOkw[1]="p";
+_uOsr[2]="msn";		_uOkw[2]="q";
+_uOsr[3]="aol";		_uOkw[3]="query";
+_uOsr[4]="lycos";	_uOkw[4]="query";
+_uOsr[5]="ask";		_uOkw[5]="q";
+_uOsr[6]="altavista";	_uOkw[6]="q";
+_uOsr[7]="search";	_uOkw[7]="q";
+_uOsr[8]="netscape";	_uOkw[8]="query";
+_uOsr[9]="earthlink";	_uOkw[9]="q";
+_uOsr[10]="cnn";	_uOkw[10]="query";
+_uOsr[11]="looksmart";	_uOkw[11]="key";
+_uOsr[12]="about";	_uOkw[12]="terms";
+_uOsr[13]="excite";	_uOkw[13]="qkw";
+_uOsr[14]="mamma";	_uOkw[14]="query";
+_uOsr[15]="alltheweb";	_uOkw[15]="q";
+_uOsr[16]="gigablast";	_uOkw[16]="q";
+_uOsr[17]="voila";	_uOkw[17]="kw";
+_uOsr[18]="virgilio";	_uOkw[18]="qs";
+_uOsr[19]="teoma";	_uOkw[19]="q";
+
+//-- Auto/Organic Keywords to Ignore
+var _uOno=new Array();
+//_uOno[0]="urchin";
+//_uOno[1]="urchin.com";
+//_uOno[2]="www.urchin.com";
+
+//-- Referral domains to Ignore
+var _uRno=new Array();
+//_uRno[0]=".urchin.com";
+
+//-- **** Don't modify below this point ***
+var _uff,_udh,_udt,_udo="",_uu,_ufns=0,_uns=0,_ur="-",_ufno=0,_ust=0,_ujv="-",_ubd=document,_udl=_ubd.location,_uwv="6.1";
+var _ugifpath2="http://service.urchin.com/__utm.gif";
+if (_udl.protocol=="https:") _ugifpath2="https://service.urchin.com/__utm.gif";
+function urchinTracker(page) {
+ if (_udl.protocol=="file:") return;
+ if (_uff && (!page || page=="")) return;
+ var a,b,c,v,x="",s="",f=0;
+ var nx=" expires=Sun, 18 Jan 2038 00:00:00 GMT;";
+ var dc=_ubd.cookie;
+ _udh=_uDomain();
+ _uu=Math.round(Math.random()*2147483647);
+ _udt=new Date();
+ _ust=Math.round(_udt.getTime()/1000);
+ a=dc.indexOf("__utma="+_udh);
+ b=dc.indexOf("__utmb="+_udh);
+ c=dc.indexOf("__utmc="+_udh);
+ if (_udn && _udn!="") { _udo=" domain="+_udn+";"; }
+ if (_utimeout && _utimeout!="") {
+  x=new Date(_udt.getTime()+(_utimeout*1000));
+  x=" expires="+x.toGMTString()+";";
+ }
+ s=_udl.search;
+ if(s && s!="" && s.indexOf("__utma=")>=0) {
+  a=_uGC(s,"__utma=","&");
+  b=_uGC(s,"__utmb=","&");
+  c=_uGC(s,"__utmc=","&");
+  if (a!="-" && b!="-" && c!="-") f=1;
+  else if(a!="-") f=2;
+ }
+ if(f==1) {
+  _ubd.cookie="__utma="+a+"; path=/;"+nx;
+  _ubd.cookie="__utmb="+b+"; path=/;"+x;
+  _ubd.cookie="__utmc="+c+"; path=/;";
+ } else if (f==2) {
+  a=_uFixA(s,"&",_ust);
+  _ubd.cookie="__utma="+a+"; path=/;"+nx;
+  _ubd.cookie="__utmb="+_udh+"; path=/;"+x;
+  _ubd.cookie="__utmc="+_udh+"; path=/;";
+  _ufns=1;
+ } else if (a>=0 && b>=0 && c>=0) {
+  _ubd.cookie="__utmb="+_udh+"; path=/;"+x+_udo;
+ } else {
+  if (a>=0) a=_uFixA(_ubd.cookie,";",_ust);
+  else a=_udh+"."+_uu+"."+_ust+"."+_ust+"."+_ust+".1";
+  _ubd.cookie="__utma="+a+"; path=/;"+nx+_udo;
+  _ubd.cookie="__utmb="+_udh+"; path=/;"+x+_udo;
+  _ubd.cookie="__utmc="+_udh+"; path=/;"+_udo;
+  _ufns=1;
+ }
+ if (s && s!="" && s.indexOf("__utmv=")>=0) {
+  if ((v=_uGC(s,"__utmv=","&"))!="-") {
+   _ubd.cookie="__utmv="+unescape(v)+"; path=/;"+nx+_udo;
+  }
+ }
+ _uInfo(page);
+ _ufns=0;
+ _ufno=0;
+ _uff=1;
+}
+urchinTracker();
+function _uInfo(page) {
+ var p,s="",pg=_udl.pathname+_udl.search;
+ if (page && page!="") pg=escape(page);
+ _ur=_ubd.referrer;
+ if (!_ur || _ur=="") { _ur="-"; }
+ else {
+  p=_ur.indexOf(_ubd.domain);
+  if ((p>=0) && (p<=8)) { _ur="0"; }
+  if (_ur.indexOf("[")==0 && _ur.lastIndexOf("]")==(_ur.length-1)) { _ur="-"; }
+ }
+ s+="&utmn="+_uu;
+ if (_ufsc) s+=_uBInfo(page);
+ if (_uctm && (!page || page=="")) s+=_uCInfo();
+ if (_utitle && _ubd.title && _ubd.title!="") s+="&utmdt="+escape(_ubd.title);
+ if (_udl.hostname && _udl.hostname!="") s+="&utmhn="+escape(_udl.hostname);
+ if (!page || page=="") s+="&utmr="+_ur;
+ s+="&utmp="+pg;
+ if (_userv==0 || _userv==2) {
+  var i=new Image(1,1);
+  i.src=_ugifpath+"?"+"utmwv="+_uwv+s;
+  i.onload=function() {_uVoid();}
+ }
+ if (_userv==1 || _userv==2) {
+  var i2=new Image(1,1);
+  i2.src=_ugifpath2+"?"+"utmwv="+_uwv+s+"&utmac="+_uacct+"&utmcc="+_uGCS();
+  i2.onload=function() { _uVoid(); }
+ }
+ return;
+}
+function _uVoid() { return; }
+function _uCInfo() {
+ if (!_ucto || _ucto=="") { _ucto="15768000"; }
+ var c="",t="-",t2="-",o=0,cs=0,cn=0;i=0;
+ var s=_udl.search;
+ var z=_uGC(s,"__utmz=","&");
+ var x=new Date(_udt.getTime()+(_ucto*1000));
+ var dc=_ubd.cookie;
+ x=" expires="+x.toGMTString()+";";
+ if (z!="-") { _ubd.cookie="__utmz="+unescape(z)+"; path=/;"+x+_udo; return ""; }
+ z=dc.indexOf("__utmz="+_udh);
+ if (z>-1) { z=_uGC(dc,"__utmz="+_udh,";"); }
+ else { z="-"; }
+ t=_uGC(s,_ucid+"=","&");
+ t2=_uGC(s,_ucsr+"=","&");
+ if ((t!="-" && t!="") || (t2!="-" && t2!="")) {
+  if (t!="-" && t!="") { c+="utmcid="+_uEC(t); if (t2!="-" && t2!="") c+="|utmcsr="+_uEC(t2);
+  } else { if (t2!="-" && t2!="") c+="utmcsr="+_uEC(t2); }
+  t=_uGC(s,_uccn+"=","&");
+  if (t!="-" && t!="") c+="|utmccn="+_uEC(t);
+  else c+="|utmccn=(not+set)";
+  t=_uGC(s,_ucmd+"=","&");
+  if (t!="-" && t!="") c+="|utmcmd="+_uEC(t);
+  else  c+="|utmcmd=(not+set)";
+  t=_uGC(s,_uctr+"=","&");
+  if (t!="-" && t!="") c+="|utmctr="+_uEC(t);
+  else { t=_uOrg(1); if (t!="-" && t!="") c+="|utmctr="+_uEC(t); }
+  t=_uGC(s,_ucct+"=","&");
+  if (t!="-" && t!="") c+="|utmcct="+_uEC(t);
+  t=_uGC(s,_ucno+"=","&");
+  if (t=="1") o=1;
+  if (z!="-" && o==1) return "";
+ }
+ if (c=="-" || c=="") { c=_uOrg(); if (z!="-" && _ufno==1)  return ""; }
+ if (c=="-" || c=="") { if (_ufns==1)  c=_uRef(); if (z!="-" && _ufno==1)  return ""; }
+ if (c=="-" || c=="") {
+  if (z=="-" && _ufns==1) { c="utmccn=(direct)|utmcsr=(direct)|utmcmd=(none)"; }
+  if (c=="-" || c=="") return "";
+ }
+ if (z!="-") {
+  i=z.indexOf(".");
+  if (i>-1) i=z.indexOf(".",i+1);
+  if (i>-1) i=z.indexOf(".",i+1);
+  if (i>-1) i=z.indexOf(".",i+1);
+  t=z.substring(i+1,z.length);
+  if (t.toLowerCase()==c.toLowerCase()) cs=1;
+  t=z.substring(0,i);
+  if ((i=t.lastIndexOf(".")) > -1) {
+   t=t.substring(i+1,t.length);
+   cn=(t*1);
+  }
+ }
+ if (cs==0 || _ufns==1) {
+  t=_uGC(dc,"__utma="+_udh,";");
+  if ((i=t.lastIndexOf(".")) > 9) {
+   _uns=t.substring(i+1,t.length);
+   _uns=(_uns*1);
+  }
+  cn++;
+  if (_uns==0) _uns=1;
+  _ubd.cookie="__utmz="+_udh+"."+_ust+"."+_uns+"."+cn+"."+c+"; path=/; "+x+_udo;
+ }
+ if (cs==0 || _ufns==1) return "&utmcn=1";
+ else return "&utmcr=1";
+}
+function _uRef() {
+ if (_ur=="0" || _ur=="" || _ur=="-") return "";
+ var i=0,h,k,n;
+ if ((i=_ur.indexOf("://"))<0) return "";
+ h=_ur.substring(i+3,_ur.length);
+ if (h.indexOf("/") > -1) {
+  k=h.substring(h.indexOf("/"),h.length);
+  if (k.indexOf("?") > -1) k=k.substring(0,k.indexOf("?"));
+  h=h.substring(0,h.indexOf("/"));
+ }
+ h=h.toLowerCase();
+ n=h;
+ if ((i=n.indexOf(":")) > -1) n=n.substring(0,i);
+ for (var ii=0;ii<_uRno.length;ii++) {
+  if ((i=n.indexOf(_uRno[ii].toLowerCase())) > -1 && n.length==(i+_uRno[ii].length)) { _ufno=1; break; }
+ }
+ if (h.indexOf("www.")==0) h=h.substring(4,h.length);
+ return "utmccn=(referral)|utmcsr="+_uEC(h)+"|"+"utmcct="+_uEC(k)+"|utmcmd=referral";
+}
+function _uOrg(t) {
+ if (_ur=="0" || _ur=="" || _ur=="-") return "";
+ var i=0,h,k;
+ if ((i=_ur.indexOf("://")) < 0) return "";
+ h=_ur.substring(i+3,_ur.length);
+ if (h.indexOf("/") > -1) {
+  h=h.substring(0,h.indexOf("/"));
+ }
+ for (var ii=0;ii<_uOsr.length;ii++) {
+  if (h.indexOf(_uOsr[ii]) > -1) {
+   if ((i=_ur.indexOf("?"+_uOkw[ii]+"=")) > -1 || (i=_ur.indexOf("&"+_uOkw[ii]+"=")) > -1) {
+    k=_ur.substring(i+_uOkw[ii].length+2,_ur.length);
+    if ((i=k.indexOf("&")) > -1) k=k.substring(0,i);
+    for (var yy=0;yy<_uOno.length;yy++) {
+     if (_uOno[yy].toLowerCase()==k.toLowerCase()) { _ufno=1; break; }
+    }
+    if (t) return _uEC(k);
+    else return "utmccn=(organic)|utmcsr="+_uEC(_uOsr[ii])+"|"+"utmctr="+_uEC(k)+"|utmcmd=organic";
+   }
+  }
+ }
+ return "";
+}
+function _uBInfo(page) {
+ var sr="-",sc="-",ul="-",fl="-",je=1;
+ var n=navigator;
+ if (self.screen) {
+  sr=screen.width+"x"+screen.height;
+  sc=screen.colorDepth+"-bit";
+ } else if (self.java) {
+  var j=java.awt.Toolkit.getDefaultToolkit();
+  var s=j.getScreenSize();
+  sr=s.width+"x"+s.height;
+ }
+ if (_ujv=="-" && (!page || page=="")) {
+  for (var i=5;i>=0;i--) {
+   var t="<script language='JavaScript1."+i+"'>_ujv='1."+i+"';</script>";
+   _ubd.write(t);
+   if (_ujv!="-") break;
+  }
+ }
+ if (n.language) { ul=n.language.toLowerCase(); }
+ else if (n.browserLanguage) { ul=n.browserLanguage.toLowerCase(); }
+ je=n.javaEnabled()?1:0;
+ if (_uflash) fl=_uFlash();
+ return "&utmsr="+sr+"&utmsc="+sc+"&utmul="+ul+"&utmje="+je+"&utmjv="+_ujv+"&utmfl="+fl;
+}
+function __utmSetTrans() {
+ var e;
+ if (_ubd.getElementById) e=_ubd.getElementById("utmtrans");
+ else if (_ubd.utmform && _ubd.utmform.utmtrans) e=_ubd.utmform.utmtrans;
+ if (!e) return;
+ var l=e.value.split("UTM:");
+ var i,i2,c;
+ if (_userv==0 || _userv==2) i=new Array();
+ if (_userv==1 || _userv==2) { i2=new Array(); c=_uGCS(); }
+
+ for (var ii=0;ii<l.length;ii++) {
+  l[ii]=_uTrim(l[ii]);
+  if (l[ii].charAt(0)!='T' && l[ii].charAt(0)!='I') continue;
+  var r=Math.round(Math.random()*2147483647);
+  if (!_utsp || _utsp=="") _utsp="|";
+  var f=l[ii].split(_utsp),s="";
+  if (f[0].charAt(0)=='T') {
+   s="&utmt=tran"+"&utmn="+r;
+   f[1]=_uTrim(f[1]); if(f[1]&&f[1]!="") s+="&utmtid="+escape(f[1]);
+   f[2]=_uTrim(f[2]); if(f[2]&&f[2]!="") s+="&utmtst="+escape(f[2]);
+   f[3]=_uTrim(f[3]); if(f[3]&&f[3]!="") s+="&utmtto="+escape(f[3]);
+   f[4]=_uTrim(f[4]); if(f[4]&&f[4]!="") s+="&utmttx="+escape(f[4]);
+   f[5]=_uTrim(f[5]); if(f[5]&&f[5]!="") s+="&utmtsp="+escape(f[5]);
+   f[6]=_uTrim(f[6]); if(f[6]&&f[6]!="") s+="&utmtci="+escape(f[6]);
+   f[7]=_uTrim(f[7]); if(f[7]&&f[7]!="") s+="&utmtrg="+escape(f[7]);
+   f[8]=_uTrim(f[8]); if(f[8]&&f[8]!="") s+="&utmtco="+escape(f[8]);
+  } else {
+   s="&utmt=item"+"&utmn="+r;
+   f[1]=_uTrim(f[1]); if(f[1]&&f[1]!="") s+="&utmtid="+escape(f[1]);
+   f[2]=_uTrim(f[2]); if(f[2]&&f[2]!="") s+="&utmipc="+escape(f[2]);
+   f[3]=_uTrim(f[3]); if(f[3]&&f[3]!="") s+="&utmipn="+escape(f[3]);
+   f[4]=_uTrim(f[4]); if(f[4]&&f[4]!="") s+="&utmiva="+escape(f[4]);
+   f[5]=_uTrim(f[5]); if(f[5]&&f[5]!="") s+="&utmipr="+escape(f[5]);
+   f[6]=_uTrim(f[6]); if(f[6]&&f[6]!="") s+="&utmiqt="+escape(f[6]);
+  }
+  if (_userv==0 || _userv==2) {
+   i[ii]=new Image(1,1);
+   i[ii].src=_ugifpath+"?"+"utmwv="+_uwv+s;
+   i[ii].onload=function() { _uVoid(); }
+  }
+  if (_userv==1 || _userv==2) {
+   i2[ii]=new Image(1,1);
+   i2[ii].src=_ugifpath2+"?"+"utmwv="+_uwv+s+"&utmac="+_uacct+"&utmcc="+c;
+   i2[ii].onload=function() { _uVoid(); }
+  }
+ }
+ return;
+}
+function _uFlash() {
+ var f="-",n=navigator;
+ if (n.plugins && n.plugins.length) {
+  for (var ii=0;ii<n.plugins.length;ii++) {
+   if (n.plugins[ii].name.indexOf('Shockwave Flash')!=-1) {
+    f=n.plugins[ii].description.split('Shockwave Flash ')[1];
+    break;
+   }
+  }
+ } else if (window.ActiveXObject) {
+  for (var ii=10;ii>=2;ii--) {
+   try {
+    var fl=eval("new ActiveXObject('ShockwaveFlash.ShockwaveFlash."+ii+"');");
+    if (fl) { f=ii + '.0'; break; }
+   }
+   catch(e) {}
+  }
+ }
+ return f;
+}
+function __utmLinker(l) {
+ var p,a="-",b="-",c="-",z="-",v="-";
+ var dc=_ubd.cookie;
+ if (l && l!="") {
+  if (dc) {
+   a=_uGC(dc,"__utma="+_udh,";");
+   b=_uGC(dc,"__utmb="+_udh,";");
+   c=_uGC(dc,"__utmc="+_udh,";");
+   z=_uGC(dc,"__utmz="+_udh,";");
+   v=_uGC(dc,"__utmv="+_udh,";");
+   p="__utma="+a+"&__utmb="+b+"&__utmc="+c+"&__utmz="+escape(z)+"&__utmv="+escape(v);
+  }
+  if (p) {
+   if (l.indexOf("?")<=-1) { document.location=l+"?"+p; }
+   else { document.location=l+"&"+p; }
+  } else { document.location=l; }
+ }
+}
+function __utmLinkPost(f) {
+ var p,a="-",b="-",c="-",z="-",v="-";
+ var dc=_ubd.cookie;
+ if (!f || !f.action) return;
+ if (dc) {
+  a=_uGC(dc,"__utma="+_udh,";");
+  b=_uGC(dc,"__utmb="+_udh,";");
+  c=_uGC(dc,"__utmc="+_udh,";");
+  z=_uGC(dc,"__utmz="+_udh,";");
+  v=_uGC(dc,"__utmv="+_udh,";");
+  p="__utma="+a+"&__utmb="+b+"&__utmc="+c+"&__utmz="+escape(z)+"&__utmv="+escape(v);
+ }
+ if (p) {
+  if (f.action.indexOf("?")<=-1) f.action+="?"+p;
+  else f.action+="&"+p;
+ }
+ return;
+}
+function __utmSetVar(v) {
+ if (!v || v=="") return;
+ var r=Math.round(Math.random() * 2147483647);
+ _ubd.cookie="__utmv="+_udh+"."+escape(v)+"; path=/; expires=Sun, 18 Jan 2038 00:00:00 GMT;"+_udo;
+ var s="&utmt=var&utmn="+r;
+ if (_userv==0 || _userv==2) {
+  var i=new Image(1,1);
+  i.src=_ugifpath+"?"+"utmwv="+_uwv+s;
+  i.onload=function() { _uVoid(); }
+ }
+ if (_userv==1 || _userv==2) {
+  var i2=new Image(1,1);
+  i2.src=_ugifpath2+"?"+"utmwv="+_uwv+s+"&utmac="+_uacct+"&utmcc="+_uGCS();
+  i2.onload=function() { _uVoid(); }
+ }
+}
+function _uGCS() {
+ var t,c="",dc=_ubd.cookie;
+ if ((t=_uGC(dc,"__utma="+_udh,";"))!="-") c+=escape("__utma="+t+";+");
+ if ((t=_uGC(dc,"__utmb="+_udh,";"))!="-") c+=escape("__utmb="+t+";+");
+ if ((t=_uGC(dc,"__utmc="+_udh,";"))!="-") c+=escape("__utmc="+t+";+");
+ if ((t=_uGC(dc,"__utmz="+_udh,";"))!="-") c+=escape("__utmz="+t+";+");
+ if ((t=_uGC(dc,"__utmv="+_udh,";"))!="-") c+=escape("__utmv="+t+";");
+ if (c.charAt(c.length-1)=="+") c=c.substring(0,c.length-1);
+ return c;
+}
+function _uGC(l,n,s) {
+ if (!l || l=="" || !n || n=="" || !s || s=="") return "-";
+ var i,i2,i3,c="-";
+ i=l.indexOf(n);
+ i3=n.indexOf("=")+1;
+ if (i > -1) {
+  i2=l.indexOf(s,i); if (i2 < 0) { i2=l.length; }
+  c=l.substring((i+i3),i2);
+ }
+ return c;
+}
+function _uDomain() {
+ if (!_udn || _udn=="" || _udn=="none") { _udn=""; return 1; }
+ if (_udn=="auto") {
+  var d=_ubd.domain;
+  if (d.substring(0,4)=="www.") {
+   d=d.substring(4,d.length);
+  }
+  _udn=d;
+ }
+ if (_uhash=="off") return 1;
+ return _uHash(_udn);
+}
+function _uHash(d) {
+ if (!d || d=="") return 1;
+ var h=0,g=0;
+ for (var i=d.length-1;i>=0;i--) {
+  var c=parseInt(d.charCodeAt(i));
+  h=((h << 6) & 0xfffffff) + c + (c << 14);
+  if ((g=h & 0xfe00000)!=0) h=(h ^ (g >> 21));
+ }
+ return h;
+}
+function _uFixA(c,s,t) {
+ if (!c || c=="" || !s || s=="" || !t || t=="") return "-";
+ var a=_uGC(c,"__utma="+_udh,s);
+ var lt=0,i=0;
+ if ((i=a.lastIndexOf(".")) > 9) {
+  _uns=a.substring(i+1,a.length);
+  _uns=(_uns*1)+1;
+  a=a.substring(0,i);
+  if ((i=a.lastIndexOf(".")) > 7) {
+   lt=a.substring(i+1,a.length);
+   a=a.substring(0,i);
+  }
+  if ((i=a.lastIndexOf(".")) > 5) {
+   a=a.substring(0,i);
+  }
+  a+="."+lt+"."+t+"."+_uns;
+ }
+ return a;
+}
+function _uTrim(s) {
+  if (!s || s=="") return "";
+  while ((s.charAt(0)==' ') || (s.charAt(0)=='\n') || (s.charAt(0,1)=='\r')) s=s.substring(1,s.length);
+  while ((s.charAt(s.length-1)==' ') || (s.charAt(s.length-1)=='\n') || (s.charAt(s.length-1)=='\r')) s=s.substring(0,s.length-1);
+  return s;
+}
+
+function _uEC(s) {
+  var n="";
+  if (!s || s=="") return "";
+  for (var i=0;i<s.length;i++) {if (s.charAt(i)==" ") n+="+"; else n+=s.charAt(i);}
+  return n;
+}
+
+function __utmVisitorCode() {
+ var r=0,t=0,i=0,i2=0,m=31;
+ var a=_uGC(_ubd.cookie,"__utma="+_udh,";");
+ if ((i=a.indexOf(".",0))<0) return;
+ if ((i2=a.indexOf(".",i+1))>0) r=a.substring(i+1,i2); else return "";  
+ if ((i=a.indexOf(".",i2+1))>0) t=a.substring(i2+1,i); else return "";  
+ var c=new Array('A','B','C','D','E','F','G','H','J','K','L','M','N','P','R','S','T','U','V','W','X','Y','Z','1','2','3','4','5','6','7','8','9');
+ return c[r>>28&m]+c[r>>23&m]+c[r>>18&m]+c[r>>13&m]+"-"+c[r>>8&m]+c[r>>3&m]+c[((r&7)<<2)+(t>>30&3)]+c[t>>25&m]+c[t>>20&m]+"-"+c[t>>15&m]+c[t>>10&m]+c[t>>5&m]+c[t&m];
+}
+Ó˜ÀÙä   ß         {ºS      _uacct     ïÓË‰      _userv     µÔ-"      _ufsc      8éh      _udn   zÁ²S      auto   LTòU      _uhash     ˆ™·Ò	      _utimeout      ²Ñ,|      1800   ¡Î	      _ugifpath	      ^ û
+      /__utm.gif
+     ĞUê•      _utsp      »Â¿c      _uflash    nñ”ú      _utitle    d>«¶      _uctm      Ö1ó      _ucto      Ù]¶Ô      15768000   :˜¢      _uccn      ®ˆyz      utm_campaign   ['•¿      _ucmd      õ¨e.
+      utm_medium     ÅŸı      _ucsr      ÚmQF
+      utm_source     .§í      _uctr      2nG      utm_term   FûÂĞ      _ucct      ‚¢iA      utm_content    ÌúÜ¼      _ucid      ëR#      utm_id     ³Ñêï      _ucno      ü‘¬      utm_nooverride     ¿`P      _uOsr      Ìyå&      _uOkw       Ö‡GÄ      google!     ×$J€      yahoo"      ”ÜŞ      msn#    E#I      aol$    XN_ÿ      query%      3b
+F      lycos&      nâ³2      ask'    lùE%	      altavista(      É,ôí      netscape)   :ŞKa	      earthlink*      :ÏK      cnn+    ŒÑ¼™	      looksmart,      Bü¿;      key-    ¥Ÿs£      about.      ¥      terms/      ©¾m"      excite0     ìkûg      qkw1    ä¤X      mamma2      §¹Ï>	      alltheweb3      ÑµT	      gigablast4      }Bg      voila5      œs4…      virgilio6   ÔT      teoma7      É:Ë      _uOno8      Ş±û      _uRno9      øøE¾      _uff:   Ãµ·      _udh;   Rs¤i      _udt<   ñb        _udo=   -Pr      _uu>    šU5      _ufns?      wbºŒ      _uns@   rÀ©—      _urA    FÑîŸ      _ufnoB      läz      _ustC   £> H      _ujvD   ò@      _ubdE   ¸O€      documentF   ªÜ×>      _udlG   0+QA      locationH   «"Øä      _uwvI   òæK:      6.1J    r'íC
+      _ugifpath2K     rP#      http://service.urchin.com/__utm.gifL    s4ê      protocolM   š8î¿      https:N     "¥
+$      https://service.urchin.com/__utm.gifO   õ-I      urchinTrackerP      ã°õ      pageQ   õºe»      file:R      Ã¬Zé'       expires=Sun, 18 Jan 2038 00:00:00 GMT;S    _YNx      cookieT     ŸÁõL      _uDomainU   &9!ì      roundV      '¶€Å      randomW     uô.      getTimeX    ÚEœÁ      indexOfY    Êêá\      __utma=Z    oFo˜      __utmb=[    û‚÷à      __utmc=\    lzC       domain=]   Ó°	       expires=^      hàJù      _uGC_   ò<»ƒ	      ; path=/;`      ï„Àº      _uFixAa     ÁÔs      .1b     pÇ      __utmv=c    ¾ÓI(      _uInfod     Ğ¨4O      pathnamee   	NH      referrerf   °™wÃ      domaing     ˜È      lastIndexOfh    xÿ-      &utmn=i     5šA      _uBInfoj    øå"ş      _uCInfok    ÒE      titlel      $õt      &utmdt=m    ”(~      hostnamen   "×H      &utmhn=o    ¢C      &utmr=p     <û(      &utmp=q     Ò      Imager      œ·È›      srct    ‡Ä{p      onloadu     ÀĞ\      _uVoidv     W:9‘      &utmac=w    *´=      &utmcc=x    ì‡")      _uGCSy      U©ü      __utmz=z    Lï`Y      utmcid={    à²K      _uEC|   Á#[û      |utmcsr=}   Aì´ø      utmcsr=~    O¡Yw      |utmccn=   ½¯e      |utmccn=(not+set)€      `›T1      |utmcmd=   c¹×b      |utmcmd=(not+set)‚      ';ä      |utmctr=ƒ   z\      _uOrg„      ÷Æ}      |utmcct=…   Í>ÜŠ      _uRef†      Ä7-      utmccn=(direct)|utmcsr=(direct)|utmcmd=(none)‡      ßYã	      substringˆ      R‰Do      toLowerCase‰    ğnÔm
+      ; path=/; Š     ×BÆ§      &utmcn=1‹   wá·8      &utmcr=1Œ   N¡¼      ://    is"Ç      www.   NFäë      utmccn=(referral)|utmcsr=      İGÂV      |utmcmd=referral‘   »Ë²¹      utmccn=(organic)|utmcsr=“    ´³$      |utmcmd=organic”    ¹ã+	      navigator•      Á¤\l      self–   âgT      screen—     ëÄJû      width˜      ·ÉÅ      height™     }»Í0
+      colorDepthš     E¬‡ğ      -bit›   4Ã•S      javaœ   ‰Û®z      awt    )™§      Toolkit    ø?²      getDefaultToolkitŸ      ã]z˜      getScreenSize       ×p,      <script language='JavaScript1.¡     î±Ú
+      '>_ujv='1.¢     6a]      ';</script>£    jZì„      browserLanguage¤    ”o™      javaEnabled¥    ‚¦UH      _uFlash¦    g¶š›      &utmsr=§    ÌÃ¾B      &utmsc=¨    Ï¹úQ      &utmul=©    "„Á¤      &utmje=ª    û²;      &utmjv=«    £ªËÿ      &utmfl=¬    ^^b      __utmSetTrans­      tÇ£      getElementById®     A=é      utmtrans¯   ÿù¶1      utmform°    O;£      UTM:±   ‹ÙÓ      _uTrim²     vŒÄ      charAt´     {%Ø·      &utmtid=µ   áİv      &utmtst=¶   }É4>      &utmtto=·   ×¯O€      &utmttx=¸   «—Ñà      &utmtsp=¹   1myF      &utmtci=º   Ó­µ      &utmtrg=»   ï¢`­      &utmtco=½   7»%      &utmipc=¾   ‰½ı      &utmipn=¿   «+´B      &utmiva=À   Ï…İ      &utmipr=Á   åŞns      &utmiqt=Â   Ê‘      pluginsÃ    Èì(!      Shockwave FlashÄ    „ˆš      descriptionÅ    ¯î      Shockwave Flash Æ   ø2‡‰      windowÇ     ŒCKr      ActiveXObjectÈ      šPB1      new ActiveXObject('ShockwaveFlash.ShockwaveFlash.É      †¶      ');Ê    Õ:      .0Ë     Ù«      __utmLinkerÌ    Æ2ú      &__utmb=Í   28ª{      &__utmc=Î   ]°ö      &__utmz=Ï   D-Æç      &__utmv=Ğ   "`      __utmLinkPostÑ      	àì      actionÒ     ÃŞ      __utmSetVarÓ    –<#0      ; path=/; expires=Sun, 18 Jan 2038 00:00:00 GMT;Ô    ™»¢      &utmt=var&utmn=Õ    İâb(      ;+Ö     ,½      none×   úø…ß      offØ    à ê      _uHashÙ     (=S:
+      charCodeAtÚ     6dQè      __utmVisitorCodeÛ   qnbÄ      ?utmwv=Ü    q´ø´      &utmt=tran&utmn=İ   X«ó      &utmt=item&utmn=Ş   )r;      _uInfo/i.onloadß    íò!      _uInfo/i2.onloadà   ¿Vr+      __utmSetTrans/i[ii].onloadá     ı«qÓ      __utmSetTrans/i2[ii].onloadâ    ÍE¥¼      __utmSetVar/i.onloadã   ë·öö      __utmSetVar/i2.onload        T                    ï%,‰                                                                                                                                                                              	                  
+      
+                 
+                         	                                                                                                                                                                                                                                                                 ³OŒc:   :   :   Ë  Ğ;  PH  Pj  Ğ  P@  P  P8  P  P  P=  P  PÚ  ĞJ  PÒ  ĞB  P  PT  ĞO  Ğ  P:  P  P  Pi  ĞØ  Ğ^  Ğ?  P  Pƒ  Ğ¥  Ğ7  P   PĞ  Ğ{  ĞD  P  P  P<  P  P
+  P  P  Px  ĞA  Pc  Ğ…  Ğ9  P  PF  P  P¬  Ğu  Ğ>  P`  Ğ  P±  ĞC  P  P
+   	         P  a  b  c  v  x  s  f  á L             P  p  s  P i  ‚                                                 
+   
+           c  t  B o    s  z  x  L               i  h  k  n  ’             t  i  h  k  ’ ¢    
+         P    • Õ Î n  j  s  i  t  	   	           e  l  i  ‚ c  ’ r  f  s                                                 f `n `’`Õ`  `u  `q  `             e `            l  p  a  b  c  z  v  L             f  p  a  b  c  z  v  L             v  r  s  i  ‚                                               t  c  L             l  n  s  i  ‚ ƒ c                d              d  h  g  i  c              c  s  t  a  ] i               s              s  n  i                r  t  i  ‚ m  a  c  ¯Â0°Iô$KE®úš‡&Õª!«!   ˜  p™ŸS˜  Œ                §        ß   º      Í   äº   Í   äº   Í   äº      Í   äº      Í   äº      Í   äº       Í   äº!   "   Í!   äº#   Í#   äº$   Í$   äº%   Í%   äº&   '   Í&   äº(   )   Í(   äº*   +   Í*   äº,   -   Í,   äº.   /   Í.   äº0   1   Í0   äº2   3   Í2   äº4   5   Í4   äº6   ¾7   ‚è  ƒ  Í6   äº8   ¾7   ‚è  ƒ  Í8   ä¾6   9   Pä¾8   :   Pä¾6   ;   Pä¾8   <   Pä¾6   =   Pä¾8   :   Pä¾6   >   Pä¾8   ?   Pä¾6   @   Pä¾8   ?   Pä¾6   A   Pä¾8   :   Pä¾6   B   Pä¾8   :   Pä¾6   C   Pä¾8   :   Pä¾6   D   Pä¾8   ?   Pä¾6   	E   Pä¾8   	:   Pä¾6   
+F   Pä¾8   
+?   Pä¾6   G   Pä¾8   H   Pä¾6   I   Pä¾8   J   Pä¾6   K   Pä¾8   L   Pä¾6   M   Pä¾8   ?   Pä¾6   N   Pä¾8   :   Pä¾6   O   Pä¾8   :   Pä¾6   P   Pä¾8   Q   Pä¾6   R   Pä¾8   S   Pä¾6   T   Pä¾8   :   PäºU   ¾7   ‚è  ƒ  ÍU   äºV   ¾7   ‚è  ƒ  ÍV   äºW      ÍW   äºX   ÍX   äºY   ÍY   äºZ   [   ÍZ   äº\   Í\   äº]   Í]   äº^   [   Í^   äº_   ¾`   Í_   äºa   ¾_   Lb   Ía   äºc   d   Íc   äºe   f   Íe   ä¾a   Lg   h   œ   ™£   ºe   i   Íe   ä™¥   ¾j    y  ä§Ee+eGe'
+e+e+e+e+e+e'eGe'e+e+e+e+e+e+e+eKe“ e“````````````````````````````````````````N5e“@;e“@?e ``` 
+``` 	` `• `+e+`š `•0z`:€ èPt  ïÎÈtt  ­      	          â       ¾   L      œ   ™    ¤™   ¾   #   ™   ä¿  Ÿ   ™   ä¿     ™	   œ   ™
+    ¤™
+      Ğ  ä   Ğ  äĞ  ä   Ğ  ä¾   L   Ğ  äº	   ¾
+    u  Í	   äº   ¾   æL   é¾   æL   éu  ÿÿÿ,u Í   äº   ¾   ‚è  ƒ  Í   äº   ¾   æL   é¾   æL   éu  è-u Í   äÁ  æL   é   ¾	   (u Ğ   äÁ  æL   é   ¾	   (u Ğ  äÁ  æL   é   ¾	   (u Ğ  ä¾      ™4   ä¾      ™6   œ&   ™7   º      ¾   (   (Í   ä™<   ¾      ™>   ä¾      ™@   œT   ™A   ¾   ‚¾   æL   éu  ¾   è,(è  ƒ Ğ  ä   Á  æL   éu  (   (Ğ  ä™M   ¾   L   Ğ  äÁ  5   ™P   äÁ         ™R   äÁ  æL   é   u "™U   œÌ   ™V   ¾    Á         u Ğ   ä¾    Á         u Ğ  ä¾    Á         u Ğ  äÁ   !   *   ™^   äÁ  !      ™`   äÁ  !   ™a   œ   ™b   Ğ  ä›%   ™b   Á   !   œ   ™d   Ğ  ä™d   Á  œj   ™f   ¾      Á   ("   (Á  (N   ä¾      Á  ("   (Á  (N   ä¾      Á  ("   (N   ä›  ™t   Á  œ”   ™v   ¾#    Á      ¾   u Ğ   ä¾      Á   ("   (Á  (N   ä¾      ¾	   ("   (Á  (N   ä¾      ¾	   ("   (N   äº$   Í$   ä›n  ™‹   Á   ""   ™   äÁ  "   ™   äÁ  "™   œ6   ™‘   ¾      ¾	   ("   (Á  (¾   (N   ä›  ™™   Á   "œ1   ™›   ¾#    ¾   L      ¾   u Ğ   ä›J   ™    ¾	   %   (¾   (%   (¾   (%   (¾   (%   (¾   (&   (Ğ   ä™®   ¾      Á   ("   (Á  (¾   (N   ä¾      ¾	   ("   (Á  (¾   (N   ä¾      ¾	   ("   (¾   (N   äº$   Í$   ä™Æ   Á  5   ™Ç   äÁ         ™É   äÁ  æL   é'   u "™Ì   œd   ™Í   ¾    Á  '       u Ğ  !   œ9   ™Ñ   ¾   '   ¾(    Á  u ("   (Á  (¾   (N   ä™Ú   ¾)    ¿  y äº$   Í$   äº*   Í*   äº   Í   ä§ `š `17F` 	§ `17F`
+`
+`&	`*	`/`P)`‘ P	ÿÿÿõP)`P)`‘ PÿÿÿõP)`
+ÿÿÿîP(`
+ÿÿÿîP(`
+ÿÿÿîP(`ª `
+— `ª `PÿÿÿçP(`P”@`/`´ P” `ÿÿÿûP(`ÿÿÿûP(`ÿÿÿûP(`Ã ` `” `L` `
++`
++`
+› `‘ `		ÿÿÿóP(`
++`
++`
+’ `– `· `
+– ` `	ÿÿÿéP’ `		– `
+,`
+,`
+,`‘@.`´ P” `ÿÿÿûP— `
+	ÿÿÿ÷P
+‘@3`ÿÿÿÿP$`,`,`P€€   XÒ†   -         
+                 Ğ  ä¾   L   ¾   L   (Ğ  ä¿     ™   ä¿     ™   œ   ™   ¾    ¿  u Ğ  ä™
+   º   ¾   L   Í   ä¾   Ÿ   ™   ä¾      ™   œ   ™   º   	   Í   ä›Å   ™   ¾   æL
+   é¾   L   u Ğ   äÁ   "   ™   äÁ   !™   œ   ™   º      Í   ä™!   ¾   æL
+   é   u ,   ™&   ä¾   æL   é   u ¾   L   )™-   œ   ™.   º   	   Í   ä™0   Á     ¾   ((0Ğ  ä¾   œ!   ™5   Á  ¾    ¿  u (0Ğ  ä™8   ¾   #   ™:   ä¿  Ÿ   ™<   ä¿     ™=   œ   ™>   Á  ¾    u  (0Ğ  ä™A   ¾   0   ™C   ä¾   L      ™F   ä¾   L      ™I   œ.   ™J   Á     ¾    ¾   L   u ((0Ğ  ä™P   ¾   L      ™S   ä¾   L      ™V   œ.   ™W   Á     ¾    ¾   L   u ((0Ğ  ä™]   ¿  Ÿ   ™_   ä¿     ™`   œ    ™a   Á     ¾   ((0Ğ  ä™d   Á     Á  ((0Ğ  ä¾   Ÿ   ™i   ä¾   ™k   œM   ™l   ¾   ‚è  ƒ Ğ  äÁ  ¾    !   (¾"   (Á  (N#   äÁ  o$   N%   ä™v   ¾   Ÿ   ™y   ä¾   ™{   œi   ™|   ¾   ‚è  ƒ Ğ  äÁ  ¾&   !   (¾"   (Á  ('   (¾(   ()   (¾*    u  (N#   äÁ  o+   N%   ä™    ¤§ 
+`
+`
+ `¦ `
+ÿÿÿùP-`• `« `š `
+ÿÿÿøP(`§ `• `‘ P¡ Pœ `•@
+`	-``
+ÿÿÿøP/` 
+§ `
+P/`Ä )`	
+ÿÿÿùP `´ $`	
+ÿÿÿùP `§ `	’ `	,`© 	`” `+`”@`© 
+`” `V*`”@`Q€€4   h˜‹4                             ¾    y  ä§ `
+	P€€4   ÜgÕ´4                             ¾    y  ä§ `
+
+P€€,   9S1É,                               ¤§ `Q€€È  Ç˜ÿÈ  õ
+      
+          8       ¾   Ÿ   ™   ä¾      ™   œ   ™   º      Í   ä™      Ğ   ä   Ğ  ä   Ğ  äĞ  äĞ  äĞ  äº   Í   ä¾   L   Ğ  ä¾    Á  	   
+   u Ğ  ä¾   ‚¾   æL   éu  ¾   è,(è  ƒ Ğ  ä¾   L   Ğ	  ä   Á  æL   éu  (   (Ğ  äÁ     œ?   ™   ¾   	   ¾    Á  u (   (Á  (¾   (N   ä   ¤™'   Á	  æL   é	   ¾   (u Ğ  äÁ  ÿ œ1   ™-   ¾    Á	  	   ¾   (   u Ğ  ä›   ™1      Ğ  ä™1   ¾    Á  ¾      (
+   u Ğ  ä¾    Á  ¾      (
+   u Ğ  äÁ        ™;   äÁ     ™<   Ÿ*   ™=   äÁ        ™?   äÁ     ™@   œØ  ™A   Á        ™C   äÁ     ™D   œ~   ™E   Á      ¾    Á  u ((0Ğ   äÁ        ™K   äÁ     ™L   œ(   ™M   Á      ¾    Á  u ((0Ğ   ä™Q   ›V   ™Q   Á        ™S   äÁ     ™T   œ(   ™U   Á      ¾    Á  u ((0Ğ   ä™Y   ¾    Á  ¾      (
+   u Ğ  äÁ        ™_   äÁ     ™`   œ-   ™a   Á       ¾    Á  u ((0Ğ   ä›   ™e   Á   !   (0Ğ   ä™f   ¾    Á  ¾"      (
+   u Ğ  äÁ        ™l   äÁ     ™m   œ-   ™n   Á   #   ¾    Á  u ((0Ğ   ä›   ™r   Á   $   (0Ğ   ä™s   ¾    Á  ¾%      (
+   u Ğ  äÁ        ™y   äÁ     ™z   œ-   ™{   Á   &   ¾    Á  u ((0Ğ   ä›e   ™   ¾'    u Ğ  äÁ        ™ƒ   äÁ     ™„   œ(   ™…   Á   &   ¾    Á  u ((0Ğ   ä™‰   ¾    Á  ¾(      (
+   u Ğ  äÁ        ™   äÁ     ™   œ(   ™‘   Á   )   ¾    Á  u ((0Ğ   ä™•   ¾    Á  ¾*      (
+   u Ğ  äÁ  +   œ   ™›   Ğ  ä™›   Á        ™   äÁ  ™   œ   ™Ÿ      ¤™Ÿ   Á      Ÿ   ™¡   äÁ      ™¢   œI   ™£   ¾'    u  Ğ   äÁ        ™§   ä¾,   ™©   œ   ™ª      ¤™ª   Á      Ÿ   ™¬   äÁ      ™­   œ_   ™®   ¾-   œ   ™±   ¾.    u  Ğ   ä™³   Á        ™µ   ä¾,   ™·   œ   ™¸      ¤™¸   Á      Ÿ   ™º   äÁ      ™»   œx   ™¼   Á        ™¾   ä¾-   ™À   œ   ™Á   /   Ğ   ä™Á   Á      Ÿ   ™Ã   äÁ      ™Ä   œ   ™Å      ¤™Å   Á     œ¢  ™Ç   º   Á  æL   é0   u Í   ä¾   ÿ œ/   ™Î   º   Á  æL   é0   ¾   (u Í   ä™Ô   ¾   ÿ œ/   ™×   º   Á  æL   é0   ¾   (u Í   ä™İ   ¾   ÿ œ/   ™à   º   Á  æL   é0   ¾   (u Í   ä™æ   Á  æL1   é¾   (Á  L2   u Ğ  äÁ  æL3   éu  Á   æL3   éu  œ   ™ñ   Ğ  ä™ñ   Á  æL1   é¾   u Ğ  äº   Á  æL4   é0   u Í   ÿ œ8   ™ú   Á  æL1   é¾   (Á  L2   u Ğ  äÁ  ,Ğ  ä™   Á  Ÿ   ™  ä¾-   ™  œ  ™  ¾    Á	  5   ¾   (   u Ğ  äº   Á  æL4   é0   u Í   	 œE   ™  º6   Á  æL1   é¾   (Á  L2   u Í6   äº6   ¾6   ,Í6   ä™  Á  2*Ğ  ä¾6   œ   ™  º6   Í6   ä™!  ¾   	   ¾   (0   (¾7   (0   (¾6   (0   (Á  (0   (Á   (8   (Á  (¾   (N   ä™3  Á  Ÿ   ™5  ä¾-   ™7  œ   ™8  9   ¤›   ™8  :   ¤™8  § `« `• `
+`
+`
+````,`/`ÿÿÿÿP(`	Pÿÿÿç(	`/`P/`” 
+`
+	ÿÿÿ÷P
+`5?F	`
+ÿÿÿîP(`‘ `
+ÿÿÿîP’ 	`/` ÿÿÿùP(` ÿÿÿùP(`İ `® `	ÿÿÿûP`® `	ÿÿÿûPš `® `	ÿÿÿûP ` ÿÿÿùP(`® `	ÿÿÿûP• `• ` ÿÿÿùP(`® `	ÿÿÿûP• 	`• ` ÿÿÿùP(`® `	ÿÿÿûP• 
+`P`® `	ÿÿÿûP ` ÿÿÿùP(`® `	ÿÿÿûP ` ÿÿÿùP(`” `+`ª `5?F `® `P`« `5?F!`® `‘ `P`« `5?F"`® `« `/`® `5?F&`” `• P)`’ `• ÿÿÿôP.`’ `• ÿÿÿôP.`’ `• ÿÿÿôP.`	ÿÿÿòP(`PP`+`ÿÿÿôP(`• P• `	ÿÿÿòP(`@3`§ `
+ÿÿÿîP(`• P• ` 	ÿÿÿòP)`—@9`+`‘ 	`‘ `
+			‘@=`§ `5?K>`V€€€  Árô  ñ                W       ¾      Ÿ,   ™   ä¾      Ÿ   ™   ä¾      ™   œ   ™	      ¤™	   Ğ   ä¾   æL   é   u Ğ   œ   ™      ¤™   ¾   æL   éÁ   (¾   L   u Ğ  äÁ  æL   é	   u ÿ œ¬   ™   Á  æL   éÁ  æL   é	   u Á  L   u Ğ  äÁ  æL   é
+   u ÿ œ1   ™!   Á  æL   éÁ  æL   é
+   u u Ğ  ä™%   Á  æL   éÁ  æL   é	   u u Ğ  ä™)   Á  æL   éu  Ğ  äÁ  Ğ  äÁ  æL   é   u Ğ   ÿ œ"   ™/   Á  æL   éÁ   u Ğ  ä™1   Ğ  äš1   Á  ¾   L   œ‘   ™5   Á  æL   é¾   Á  MæL   éu  u Ğ   ÿ )   ™=   äÁ  L   Á   ¾   Á  ML   (™C   œ   ™D   º   Í   ä›   ™F   Á  2*Ğ  ä›_ÿÿÿ™H   Á  æL   é   u œ(   ™L   Á  æL   éÁ  L   u Ğ  ä™O      ¾    Á  u (   (¾    Á  u (   (¤§ `Æ !`5F`&`‘ P“ `5F`
+ÿÿÿòP(` P ` P	ÿÿÿçP(` P ` PÿÿÿòP-` PÿÿÿòPM
+`P(`)` P” `ÿÿÿôP- `f• `‘ 
+PÿÿÿîP 5  `	`J `•@` P`	ÿÿÿôP-`#ÿÿÿûP
+ÿÿÿûPQ€€€         Õ  ¦   T  À=æ4                   g      ¾      Ÿ,   ™   ä¾      Ÿ   ™   ä¾      ™   œ   ™	      ¤™	   Ğ   ä¾   æL   é   u Ğ   œ   ™      ¤™   ¾   æL   éÁ   (¾   L   u Ğ  äÁ  æL   é	   u ÿ œ1   ™   Á  æL   éÁ  æL   é	   u u Ğ  ä™   Ğ  äš   Á  ¾
+   L   œ  ™    Á  æL   é¾
+   Á  Mu ÿ œÈ  ™&   ¾   æL   é   ¾   Á  M(   (u Ğ   ÿ Ÿ7   ™/   ä¾   æL   é   ¾   Á  M(   (u Ğ   ÿ ™7   œV  ™8   ¾   æL   éÁ   ¾   Á  ML   ((¾   L   u Ğ  äÁ  æL   é   u Ğ   ÿ œ"   ™F   Á  æL   éÁ   u Ğ  ä™H   Ğ  äšH   Á  ¾   L   œ]   ™L   ¾   Á  MæL   éu  Á  æL   éu  œ   ™T   º   Í   ä›   ™V   Á  2*Ğ  ä›“ÿÿÿ™X   ¿  œ   ™Y   ¾    Á  u ¤›>   ™[      ¾    ¾
+   Á  Mu (   (¾    Á  u (   (¤™e   Á  2*Ğ  ä›îıÿÿ™g      ¤§ `Æ !`5F`&`‘ P“ `5F`
+ÿÿÿòP(` P ` PÿÿÿòPM `f• `
+
+ÿÿÿøP 	`‘ ÿÿÿôP¡ 3‘ ÿÿÿôP™ `“ 
+ÿÿÿáP(
+` P” `ÿÿÿôP-
+ `f• 
+`‘ 
+PP`	`J#`•@	``ÿÿÿûP3K
+`"
+ÿÿÿûP
+ÿÿÿûP:F `•@`Q€€T         /  r          ı     „  ÕCd’t  ®      
+          M         Ğ   ä   Ğ  ä   Ğ  ä   Ğ  äĞ  ä¾   Ğ  ä¾   L   œD   ™   ¾   L      (¾   L   (Ğ   ä¾   L   	   (Ğ  ä›m   ™   ¾   L
+   œY   ™   ¾
+   L   L   æL   éu  Ğ  äÁ  æL   éu  Ğ  äÁ  L      (Á  L   (Ğ   ä™   ¾      #   ™   ä¿  Ÿ   ™    ä¿     ™!   œŠ   ™"   Ğ  äš"   Á  "œm   ™$      Á  (   (Á  (   (Ğ	  ä¾   æL   éÁ	  y ä¾      œ   ™.   ›   ™.   Á  2+Ğ  ä›Œÿÿÿ™0   Á  L   œ'   ™2   Á  L   æL   éu  Ğ  ä›5   ™5   Á  L   œ"   ™7   Á  L   æL   éu  Ğ  ä™:   Á  æL   éu  œ   ™=   ›   ™=   ™=   Ğ  ä¾   œ   ™?   ¾    u  Ğ  ä™A      Á   (   (Á  (   (Á  (   (Á  (    (¾   (!   (Á  (¤§ 	`
+`
+`
+`
+`&`*`” `  `Ÿ `” 	`– P(	`P(`”@`– §  `f 
+`! `ÿÿÿúP$`• `J`•@`“ ` P’ `“ ` P-`P£ `	`P-`Q„         7  y   h  "ç8X  Á	      	          B      ¾   L   œ(   ™   ¾   æL   é   u Ğ   ä›Q   ™   ¾   L      ™	   ä¾   L   L   ™   œ   ™   ¾   L   L   Ğ   ä™   Á      ™    ¤™   Á   L   æL   é   u Ğ  ä¾   Ÿ   ™   ä¾   ™   œ   ™   ¾	   ‚è  ƒ  Ğ  ä™   ¾   Ÿ   ™   ä¾   ™!   œ*   ™"   ¾	   ‚è  ƒ  Ğ  ä¾
+    u  Ğ  ä™&   Ğ  äš&   Á  Á  L   œ\  ™)   Á  Á  ¾    Á  Á  Mu PäÁ  Á  MæL   éu    %   ™2   äÁ  Á  MæL   éu    ™6   œ   ™7   ›Ó  ™7   ¾   æL   é¾   æL   éu  ÿÿÿ,u Ğ  ä¾   Ÿ   ™A   ä¾      ™C   œ   ™D   º      Í   ä™F   Á  Á  MæL   é¾   u Ğ  ä   Ğ  äÁ  MæL   éu    œy  ™O      Á  (Ğ  äÁ  ¾    Á  Mu PäÁ  M   ™V   äÁ  M   ™X   œ*   ™Y   Á     ¾    Á  Mu ((0Ğ  ä™^   Á  ¾    Á  Mu PäÁ  M   ™d   äÁ  M   ™f   œ+   ™g   Á     ¾    Á  Mu ((0Ğ  ä™l   Á  ¾    Á  Mu PäÁ  M   ™r   äÁ  M   ™t   œ+   ™u   Á     ¾    Á  Mu ((0Ğ  ä™z   Á  ¾    Á  Mu PäÁ  M   ™€   äÁ  M   ™‚   œ+   ™ƒ   Á     ¾    Á  Mu ((0Ğ  ä™ˆ   Á  ¾    Á  Mu PäÁ  M   ™   äÁ  M   ™   œ+   ™‘   Á     ¾    Á  Mu ((0Ğ  ä™–   Á  ¾    Á  Mu PäÁ  M   ™œ   äÁ  M   ™   œ+   ™Ÿ   Á     ¾    Á  Mu ((0Ğ  ä™¤   Á  ¾    Á  Mu PäÁ  M   ™ª   äÁ  M   ™¬   œ+   ™­   Á     ¾    Á  Mu ((0Ğ  ä™²   Á  ¾    Á  Mu PäÁ  M   ™¸   äÁ  M   ™º   œ+   ™»   Á     ¾    Á  Mu ((0Ğ  ä™À   ›—  ™À       Á  (Ğ  äÁ  ¾    Á  Mu PäÁ  M   ™Ç   äÁ  M   ™É   œ*   ™Ê   Á     ¾    Á  Mu ((0Ğ  ä™Ï   Á  ¾    Á  Mu PäÁ  M   ™Õ   äÁ  M   ™×   œ+   ™Ø   Á  !   ¾    Á  Mu ((0Ğ  ä™İ   Á  ¾    Á  Mu PäÁ  M   ™ã   äÁ  M   ™å   œ+   ™æ   Á  "   ¾    Á  Mu ((0Ğ  ä™ë   Á  ¾    Á  Mu PäÁ  M   ™ñ   äÁ  M   ™ó   œ+   ™ô   Á  #   ¾    Á  Mu ((0Ğ  ä™ù   Á  ¾    Á  Mu PäÁ  M   ™ÿ   äÁ  M   ™  œ+   ™  Á  $   ¾    Á  Mu ((0Ğ  ä™  Á  ¾    Á  Mu PäÁ  M   ™  äÁ  M   ™  œ+   ™  Á  %   ¾    Á  Mu ((0Ğ  ä™  ¾   Ÿ   ™  ä¾   ™  œ\   ™  Á  Á  ¾&   ‚è  ƒ PäÁ  Á  M¾'   (   (¾)   (Á  (N*   äÁ  Á  Mo+   N,   ä™(  ¾   Ÿ   ™+  ä¾   ™-  œs   ™.  Á  Á  ¾&   ‚è  ƒ PäÁ  Á  M¾-   (   (¾)   (Á  (.   (¾/   (0   (Á  (N*   äÁ  Á  Mo1   N,   ä™@  Á  2*Ğ  ä›•÷ÿÿ™B   ¤§ `” `‘ P’ `³ '`™ ``1/F`• P `© `
+P-`© `
+P`PM
+ `f” `	ÿÿÿùP%`‘ P¥ P˜ `*	`P	ÿÿÿõP(`« `• 	` ÿÿÿúP`*`P“ `*`ÿÿÿùP`¬ `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùPš `*`ÿÿÿùP`¬ `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP `ÿÿÿùP`® `	ÿÿÿùP@#`© `” P%`” !+`™@(`© `” P%`” #+`™@
+`•@.`Qh         I  p  4   ÜgÕ´4                             ¾    y  ä§ `
+
+P€€4   ÜgÕ´4                             ¾    y  ä§ `
+
+P€€¼  «Û„à|  î                &       $áÑ    äãÑ    ä7Ñ    ä   Ñ    ä½   Ñ    äÄ    L      ™   äÄ    L   L   ™   œÃ   ™   Ñ    äš   Ä    Ä    L   L   œŠ   ™
+   Ä    L   Ä    ML   æL   é   u ÿœ>   ™   Ä    L   Ä    ML   æL	   é
+   u MÑ    ä›   ™   Ä    2*Ñ    ä›^ÿÿÿ™   ›È   ™   ½   L   œ´   ™   
+Ñ    äš   Ä    "œ’   ™   ®½       Ä    (   (| íX  Ñ    äÄ    œ"   ™#   Ä       (Ñ    ä›=   ™$   ›   ™$    ¦°Ó   ¶    äÔ™$   Ä    2+Ñ    ä›dÿÿÿ™&   Ä    ¤§˜ ``,`µ  `f› `£ P `£ P,`J%`£@	`”  `	f“!`4ÿÿÿÇ/	` `“ `—@’@
+`™@`Q€€¼  Œ     À     ÿÿÿÿ       m   §           Z  Y          @  ¡   À  ¤GåDÀ  ı                6          Ğ  ä   Ğ  ä   Ğ  ä   Ğ  ä   Ğ  ä¾   L   Ğ  ä¿     ™   ä¿     ™   œš  ™   Á  œ  ™   ¾    Á     ¾   (   u Ğ  ä¾    Á  	   ¾   (   u Ğ  ä¾    Á  
+   ¾   (   u Ğ  ä¾    Á     ¾   (   u Ğ  ä¾    Á     ¾   (   u Ğ  ä   Á  (   (Á  (   (Á  (   (¾    Á  u (   (¾    Á  u (Ğ   ä™'   Á   œo   ™(   ¿  æL   é   u ÿ!œ(   ™,   ¾   ¿     (Á   (N   ä›#   ™0   ¾   ¿     (Á   (N   ä™4   ›   ™4   ¾   ¿  N   ä™6   § 
+`
+`
+`
+`
+`*	`/`¦ `.`
+ÿÿÿîP(`
+ÿÿÿîP(`
+ÿÿÿîP(`
+ÿÿÿîP(`
+ÿÿÿîP(`ÿÿÿùP
+ÿÿÿùPN`.`P `• `š `“0P€€€¼  Ís,–¼  ó                7          Ğ  ä   Ğ  ä   Ğ  ä   Ğ  ä   Ğ  ä¾   L   Ğ  ä¿  Ÿ   ™   ä¿  L   ™   œ   ™    ¤™   Á  œ  ™   ¾    Á     ¾   (   u Ğ  ä¾    Á  	   ¾   (   u Ğ  ä¾    Á  
+   ¾   (   u Ğ  ä¾    Á     ¾   (   u Ğ  ä¾    Á     ¾   (   u Ğ  ä   Á  (   (Á  (   (Á  (   (¾    Á  u (   (¾    Á  u (Ğ   ä™)   Á   œn   ™*   ¿  L   æL   é   u ÿ!œ*   ™/   ¿  æL      Á   ((0N   ä›%   ™3   ¿  æL      Á   ((0N   ä™7    ¤§ 
+`
+`
+`
+`
+`*	`/`˜ `1F`.`
+ÿÿÿîP(`
+ÿÿÿîP(`
+ÿÿÿîP(`
+ÿÿÿîP(`
+ÿÿÿîP(`ÿÿÿùP
+ÿÿÿùPN`.`” 	P `— `’@`Q€  ×o¯  š         	       >       ¿  Ÿ   ™   ä¿     ™   œ   ™    ¤™   ¾   æL   é¾   æL   éu  ÿÿÿ,u Ğ   ä¾      ¾   (   (¾	    ¿  u (
+   (¾   (N   ä   Á   (Ğ  ä¾   Ÿ   ™   ä¾   ™   œM   ™   ¾   ‚è  ƒ Ğ  äÁ  ¾      (¾   (Á  (N   äÁ  o   N   ä™'   ¾   Ÿ   ™*   ä¾   ™,   œi   ™-   ¾   ‚è  ƒ Ğ  äÁ  ¾      (¾   (Á  (   (¾   (   (¾    u  (N   äÁ  o   N   ä™>   § `§ `1F`P	ÿÿÿõP(`
+	ÿÿÿùP
+=,`*`© 	`” `+`”@
+`© 
+`” `V*`”0P4   ÜgÕ´4                             ¾    y  ä§ `
+
+P€€4   ÜgÕ´4                             ¾    y  ä§ `
+
+P€€  oë`r  .                C           Ğ  ä¾   L   Ğ  ä¾    Á     ¾   (   u Ğ      œ.   ™   Á  ¾	       Á   (
+   (u (0Ğ  ä™   ¾    Á     ¾   (   u Ğ      œ.   ™   Á  ¾	       Á   (
+   (u (0Ğ  ä™   ¾    Á     ¾   (   u Ğ      œ.   ™   Á  ¾	       Á   (
+   (u (0Ğ  ä™#   ¾    Á     ¾   (   u Ğ      œ.   ™)   Á  ¾	       Á   (
+   (u (0Ğ  ä™.   ¾    Á     ¾   (   u Ğ      œ.   ™4   Á  ¾	       Á   (   (u (0Ğ  ä™9   Á  æL   éÁ  L   )u    œ)   ™?   Á  æL   éÁ  L   )u Ğ  ä™C   Á  ¤§ 
+`
+`/`
+ÿÿÿîP— #`
+
+
+ÿÿÿïP/`
+ÿÿÿîP— #`
+
+
+ÿÿÿïP/`
+ÿÿÿîP— #`
+
+
+ÿÿÿïP/`
+ÿÿÿîP— #`
+
+
+ÿÿÿïP/`
+ÿÿÿîP— #`
+
+
+ÿÿÿïP/`	ÿÿÿùP“ `ÿÿÿôP-`Q€€œ  \T[äœ  &                       ¿  ŸZ   ™   ä¿     ŸF   ™   ä¿ Ÿ7   ™   ä¿    Ÿ#   ™   ä¿ Ÿ   ™
+   ä¿    ™   œ   ™      ¤™      Ğ  ä¿  æL   é¿ u Ğ   ä¿ æL   é   u (Ğ  äÁ   ÿ œd   ™   ¿  æL   é¿ Á   u Ğ  äÁ  œ   ™   ¿  L   Ğ  ä™   ¿  æL   éÁ   Á  (Á  u Ğ  ä™   Á  ¤§ `£ £ § `5
+F`*`
+ÿÿÿøP(`P*`‘ `
+ÿÿÿöP` 
+`’ `
+ÿÿÿïPM	`Q€€€h  OÖ,ßh                           ¾   Ÿ,   ™   ä¾      Ÿ   ™   ä¾      ™   œ   ™	   º      Í   ä¤™   ¾      œl   ™   ¾   L   Ğ   äÁ   æL   éu    œ(   ™   Á   æL   éÁ   L	   u Ğ   ä™   º   Á   Í   ä™   ¾
+      œ   ™   ¤™   ¾    ¾   u ¤§ `Á %` 	`1F`• 	`/`P“ `	ÿÿÿôPM`”@	`• `1F
+`ÿÿÿùPQ€€€h  Mt,&X  è          	             ¿  Ÿ   ™   ä¿     ™   œ   ™   ¤™   Ğ   äĞ  ä¿  L   )Ğ  äš   Á  "œˆ   ™   ¾    ¿  æL   éÁ  u u Ğ  äÁ   %ÿÿÿÁ  (Á  %(Ğ   äÁ     àĞ  œ   ™   Á   Á  &Ğ   ä™   Á  2+Ğ  ä›qÿÿÿ™   Á   ¤§ `§ `1	F``& `f 	`	
+ÿÿÿõPÿÿÿıP(`-`š `’@`•@`Q€€€h         I   ”   ¨  øA¾¨  õ                8       ¿  ŸZ   ™   ä¿     ŸF   ™   ä¿ Ÿ7   ™   ä¿    Ÿ#   ™   ä¿ Ÿ   ™
+   ä¿    ™   œ   ™      ¤™   ¾    ¿     ¾   (¿ u Ğ   äĞ  äĞ  äÁ   æL   é   u Ğ  	 œ-  ™   º   Á   æL	   éÁ  (Á   L
+   u Í   äº   ¾   ,(Í   äÁ   æL	   éÁ  u Ğ   äÁ   æL   é   u Ğ   œD   ™%   Á   æL	   éÁ  (Á   L
+   u Ğ  äÁ   æL	   éÁ  u Ğ   ä™+   Á   æL   é   u Ğ   œ"   ™/   Á   æL	   éÁ  u Ğ   ä™1   Á      Á  (   (¿ (   (¾   ((0Ğ   ä™8   Á   ¤§ `£ £ § `5F`
+ÿÿÿîP(	``&` P” ` 	ÿÿÿòP)`” `ÿÿÿôP(` P” `	ÿÿÿòP(`ÿÿÿôPM` P” `ÿÿÿôPM`	
+’@`Q€  3Èòùì  m                 )      ¿  Ÿ   ™   ä¿     ™   œ   ™      ¤™   ìš   ¿  æL   éu    Ÿ?   ™   ä¿  æL   éu    Ÿ    ™   ä¿  æL   éu    ™   œ)   ™   ¿  æL   é¿  L   u Ï  ä›~ÿÿÿ™   ìš   ¿  æL   é¿  L   )u    ŸP   ™   ä¿  æL   é¿  L   )u    Ÿ(   ™   ä¿  æL   é¿  L   )u    ™$   œ+   ™%   ¿  æL   é¿  L   )u Ï  ä›bÿÿÿ™)   ¿  ¤§ `§ `5FfPŸ P  P˜ `ÿÿÿôP‘ f
+	
+ÿÿÿùP &
+ÿÿÿùP '
+ÿÿÿùP˜ `
+ÿÿÿôP‘ `Q€€         3   ‡          À   £   L  É"~D<  Ö                          Ğ   ä¿  Ÿ   ™   ä¿     ™   œ   ™      ¤™   Ğ  äš   Á  ¿  L   œv   ™   ¿  æL   éÁ  u    œ   ™   Á      (0Ğ   ä›&   ™   Á   ¿  æL   éÁ  u (0Ğ   ä™   Á  2*Ğ  ä›|ÿÿÿ™   Á   ¤§ 	`*`§ `5F `f“ `
+	ÿÿÿùP“ `š `ÿÿÿùPÿÿÿÒ`• `Q€€L         B   ‰   ¤  T†êV¤  ×         *       S        Ğ   äĞ  äĞ  äĞ  äĞ  ä¾    ¾   L      ¾   (   u Ğ  äÁ  æL   é   u Ğ  œ   ™
+    ¤™
+   Á  æL   é   Á  (u Ğ   œ,   ™   Á  æL	   éÁ  (Á  u Ğ   ä›   ™   
+   ¤™   Á  æL   é   Á  (u Ğ   œ,   ™   Á  æL	   éÁ  (Á  u Ğ  ä›   ™   
+   ¤™   ¾   ‚                                                                !   "   #   $   %   &   '   (   )   *   +   è!  ƒ  Ğ  äÁ  Á   &Á  MÁ  Á   &Á  M(Á  Á   &Á  M(Á  Á   &Á  M(,   (Á  Á   &Á  M(Á  Á   &Á  M(Á  Á   %Á  &(M(Á  Á  &Á  M(Á  Á  &Á  M(,   (Á  Á  &Á  M(Á  Á  
+&Á  M(Á  Á  &Á  M(Á  Á  Á  M(¤§ `````'`
+
+ÿÿÿéP(`‘ P“ `1F` ÿÿÿôP“ `ÿÿÿòP’ `5F` ÿÿÿôP“ `ÿÿÿñP’ `5F`ÿ³ `
+Q€€3õØ  `F  L  Q  9  x   R  D  S  :  T  =  *  U  V  ;  )  B  W  X  Y  Z  [    <  \  ;    ]  Í  …  ^  &  -  _  `  >  .  a  b  â  c  A    `u    `u    `x   F  d  …  ‡   @  D  e  -  X  f  0  [  g  ]    h  =    i    j    k  l  m  n  o  p    q    Û  H  r    pt  J  v     w  x    p  `  `  x     -  i  F  …  ^  y  &  )  ;  W  D  S  ]  Í  ;  â  _  <  X  :    =    z  {  |  }    ~      €      ‚  ƒ    „    1  A  >  …  †  .  ‡    ˆ  g  Y  ?  B  ‰  Š  ‹    `@  0  x   -  X  Œ  ‡    /  ?  ˆ  :  8  A      {  „      `@  0  x   -  X  Œ  ‡    /    ?    =  &  7  ˆ  A  {  ‘  ‚  “  	  `-  ”  •  –  —  x  ˜  ™  š  ›  œ      Ÿ  C  x      ¡  ¢  D      ˆ  £  ¤    ¥  ¦  §  ¨  ©  ª  «    `u    `u  
+  `D  ­  ®  ¯  ö  ˆ  °    &  x    ±  ²  T  I  *  U  V  
+  x   |  Ü  ´  ‡   µ  ¶  ·  ¸  ¹  º  »  İ  ½  ¾  ¿  À  Á  q    Û  H  r    pt  J  v     w    p  `-  ”  Â    9  X  Ã  Ä  ˆ  Å  Æ  Ç  ˆ   È  É  Ê    `  `-  D  S  x   ^  Y  :  ;  Z  [  y  b  Ì  Í  Î  ‡   Ï  X  ?  E  G  &    `-  D  S  Ñ  ^  Y  :  ;  Z  [  y  b  Ì  Í  Î  ‡   Ï  X  ?  &    `u    `u    `x   *  U  V  D  b  :  .  ‡   Ó  <  S  Ô    q    Û  H  r    pt  J  v     w  x    p  `x   D  S  ^  Y  :  ;  -  ‡   Õ  Z  [  y  b  ²    +  ‡    `x   -  X  =    ‡    `  x   Ö    D  f  ‡        ×  Ø    `x     p  Ù    `x   -  ^  Y  :  g  .  ?  ‡      `x   ²     
+    ‡      `x     ²     +    `^  D  S  Y  :  ;  X  .  ‡  x   &  A  B  C  D  E  F  G  H  J  K  L  M  N  P  R  S  T  U  V  W  X  Y  Z  1  2  3  4  5  6  7  8  9  -     `  p  p  p  p  p  p	  p
+  p  p  p  p  p  p  p  p  p  p  p  p  p   x                    	  
+  |                                          &       q  !  p  "  #  $  %  &  '  …  (  )  *  +  ,  -  .  /  0  1  2  3  4    5  œ 6  7  8  <  >  ?  @  -  A  B  C  D  E  F  G  H  I  J  K  L  M  N  O  ÿX„é  k                  +   O        /   ,   c        +      Ş        -      ß        [      u        \   ;   j        —      …        «      ƒ        Á   "   i        ç   2   ¬        ã      à        å      á             ¥        +     Ë        B     Ğ        [     Ò        W     â        Y     ã        w     x        Š     ^        ‘     T             Ø        £     `        ®     ±        ¶     {        ¼  -   Ú        H©À      ø?      ø?                  '
+  ”  
+  ”  C              µ  U  ¦  U  |                 ›  …  ›                  7  G  /  G  •                e  s  V  s  ™                „  ç  t  ç  š                ö  œ  è  œ  Ú                «  ¡"    ¡"  í               ²"  ’%  ¢"  ’%               ©%  O-  “%  O-                 z,  Š,  r,  Š,  B               --  =-  %-  =-  G             ƒ.`-  C/  P-  C/  L               X/  N1  D/  N1  `              e1  -3  O1  -3  r             B3  B5  .3  B5  „              4  ‘4  y4  ‘4  Œ               -5  =5  %5  =5  ‘               Q5  "7  C5  "7  ”               07  8  #7  8                /8  #9  8  #9  ©               39  :  $9  :  µ              #:  Ñ;  :  Ñ;  ¿              á;  ı<  Ò;  ı<  Ò              =  =  ÿ<  =  Ù              ¸=  ÷?  Ÿ=  ÷?  à             5¡İĞeRµ¾bš(ä      i}ø9i}ø9I"Kãi†F(   L    O^partitionKey=%28https%2Cafraid.org%29,:https://freedns.afraid.org/__utm.js strongly-framed 1 security-info FnhllAKWRHGAlo+ESXykKAAAAAAAAAAAwAAAAAAAAEaphjojH6pBabDSgSnsfLHeAAAAAgAAAAAAAAAAAAAAAAAAAAEAOQFmCjImkVxP+7sgiYWmMt8FvcOXmlQiTNWFiWlrbpbqgwAAAAAAAAZJMIIGRTCCBS2gAwIBAgIQK0t6v1/bf512qNgM2Ah/YDANBgkqhkiG9w0BAQsFADCBjzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMTcwNQYDVQQDEy5TZWN0aWdvIFJTQSBEb21haW4gVmFsaWRhdGlvbiBTZWN1cmUgU2VydmVyIENBMB4XDTI1MDUwMjAwMDAwMFoXDTI2MDYwMTIzNTk1OVowHTEbMBkGA1UEAxMSZnJlZWRucy5hZnJhaWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnuoPaIHGZMxYy9wHMrHhyFzUsQvTlnY2wayCYtGaur+CZ/htStWg8UNUOdvDtr7Qkf9zSU8KJJecnYZY1JK2WMSn0+NMvlIxO2eNA0iIsxIeSP1g6CpZtsowxiuqqm3/UIh2XmPmfvGLQAOhcZQBmNQWsEVLoVzLBHqLdMwKARQXCC/5zlfhBE60wmd+Dwu5TPaM8Qd7RCkpbZQty+ln++9paNT5EQQVMpYUSW+FXyc7EXEAWZLxhEuvWOiJW9oE0TxVqbFLmIQu1LQErwKtpdC/jaaIQx4aX5UlS2WIOl1y1hsgYaWkZI72641qURHVH62gNwwXJYppLCK3Tl1e7wIDAQABo4IDDDCCAwgwHwYDVR0jBBgwFoAUjYxexFStiuF36Zv5mwXhuAGNYeEwHQYDVR0OBBYEFOZOa6QK4LHn7zRBr3ko2Red74dCMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjBJBgNVHSAEQjBAMDQGCysGAQQBsjEBAgIHMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMAgGBmeBDAECATCBhAYIKwYBBQUHAQEEeDB2ME8GCCsGAQUFBzAChkNodHRwOi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29SU0FEb21haW5WYWxpZGF0aW9uU2VjdXJlU2VydmVyQ0EuY3J0MCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdvLmNvbTA1BgNVHREELjAsghJmcmVlZG5zLmFmcmFpZC5vcmeCFnd3dy5mcmVlZG5zLmFmcmFpZC5vcmcwggF+BgorBgEEAdZ5AgQCBIIBbgSCAWoBaAB1AJaXZL9VWJet90OHaDcIQnfp8DrV9qTzNm5GpD8PyqnGAAABlpKcXqEAAAQDAEYwRAIgS8K8V/3LX2qpHrd1qUvpk9Xh8U76fm+qQ0k4+cURDUUCIB6+ngakrAkKUd/TEpyY0EfPDofrnD7qwmlvl/q9ehDZAHcAGYbUxyiqb/66A294Kk0BkarOLXIxD67OXXBBLSVMx9QAAAGWkpxegAAABAMASDBGAiEA0gRQXZP1cjbotsSB69tF7cC3oGc0WaEHqhLkZQpnNuECIQCrnqgXzwpGxYDb+xn9fY63yfjDLIhB7L5ZDDpBuA42sAB2AA5XlLzzrqk+MxssmQez95Dfm8I9cTIl3SGpJaxhxU4hAAABlpKcXqwAAAQDAEcwRQIgMG0yxiji0edFl9EYL7ygP8T9v6fAdaug9u6TMdPNVvQCIQDowPu2z32rL3UjD/MIsEjp6UQgvp13Q1QGDPskqqy8NjANBgkqhkiG9w0BAQsFAAOCAQEAm2MiQK1S1jobPk/F/dobqbR7t0RNCoZmBtgE7NAot0DpUjUyw4L1ZYtqy/PixXA1p5ibEwY8kzxXW4uBjp4Z0W2DYQsXWyQrdjJ9XjIDZfrgaU0RwLFd4Xi9JCnESbbcpMU2SWu0m5iSlx0y/EFSSZcmJWwCI5nX+KBAmpLUNxEt3jCSZR8Fj8Vv9e6GPVFjqIyT3vFtLPAfOKnXO5dUuXk+KyX7AvJz0QAWEpz3GKqFR6/7EE0NA2mGVAuaftImLVwB2YNEaE6X35aiSGa3o7LO974Fha0JOn2DTTp8C015d2hoocMbWLCCWi1koT0juJL1WJb4bzhM7NRdAs6+kMAvAAMAAAAAAAEBAAAFAAAABngyNTUxOQAAAA5SU0EtUFNTLVNIQTI1NgADZgoyJpFcT/u7IImFpjLfBb3Dl5pUIkzVhYlpa26W6oMAAAAAAAAGSTCCBkUwggUtoAMCAQICECtLer9f23+ddqjYDNgIf2AwDQYJKoZIhvcNAQELBQAwgY8xCzAJBgNVBAYTAkdCMRswGQYDVQQIExJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcTB1NhbGZvcmQxGDAWBgNVBAoTD1NlY3RpZ28gTGltaXRlZDE3MDUGA1UEAxMuU2VjdGlnbyBSU0EgRG9tYWluIFZhbGlkYXRpb24gU2VjdXJlIFNlcnZlciBDQTAeFw0yNTA1MDIwMDAwMDBaFw0yNjA2MDEyMzU5NTlaMB0xGzAZBgNVBAMTEmZyZWVkbnMuYWZyYWlkLm9yZzCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAJ7qD2iBxmTMWMvcBzKx4chc1LEL05Z2NsGsgmLRmrq/gmf4bUrVoPFDVDnbw7a+0JH/c0lPCiSXnJ2GWNSStljEp9PjTL5SMTtnjQNIiLMSHkj9YOgqWbbKMMYrqqpt/1CIdl5j5n7xi0ADoXGUAZjUFrBFS6FcywR6i3TMCgEUFwgv+c5X4QROtMJnfg8LuUz2jPEHe0QpKW2ULcvpZ/vvaWjU+REEFTKWFElvhV8nOxFxAFmS8YRLr1joiVvaBNE8VamxS5iELtS0BK8CraXQv42miEMeGl+VJUtliDpdctYbIGGlpGSO9uuNalER1R+toDcMFyWKaSwit05dXu8CAwEAAaOCAwwwggMIMB8GA1UdIwQYMBaAFI2MXsRUrYrhd+mb+ZsF4bgBjWHhMB0GA1UdDgQWBBTmTmukCuCx5+80Qa95KNkXne+HQjAOBgNVHQ8BAf8EBAMCBaAwDAYDVR0TAQH/BAIwADAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwSQYDVR0gBEIwQDA0BgsrBgEEAbIxAQICBzAlMCMGCCsGAQUFBwIBFhdodHRwczovL3NlY3RpZ28uY29tL0NQUzAIBgZngQwBAgEwgYQGCCsGAQUFBwEBBHgwdjBPBggrBgEFBQcwAoZDaHR0cDovL2NydC5zZWN0aWdvLmNvbS9TZWN0aWdvUlNBRG9tYWluVmFsaWRhdGlvblNlY3VyZVNlcnZlckNBLmNydDAjBggrBgEFBQcwAYYXaHR0cDovL29jc3Auc2VjdGlnby5jb20wNQYDVR0RBC4wLIISZnJlZWRucy5hZnJhaWQub3JnghZ3d3cuZnJlZWRucy5hZnJhaWQub3JnMIIBfgYKKwYBBAHWeQIEAgSCAW4EggFqAWgAdQCWl2S/VViXrfdDh2g3CEJ36fA61fak8zZuRqQ/D8qpxgAAAZaSnF6hAAAEAwBGMEQCIEvCvFf9y19qqR63dalL6ZPV4fFO+n5vqkNJOPnFEQ1FAiAevp4GpKwJClHf0xKcmNBHzw6H65w+6sJpb5f6vXoQ2QB3ABmG1Mcoqm/+ugNveCpNAZGqzi1yMQ+uzl1wQS0lTMfUAAABlpKcXoAAAAQDAEgwRgIhANIEUF2T9XI26LbEgevbRe3At6BnNFmhB6oS5GUKZzbhAiEAq56oF88KRsWA2/sZ/X2Ot8n4wyyIQey+WQw6QbgONrAAdgAOV5S8866pPjMbLJkHs/eQ35vCPXEyJd0hqSWsYcVOIQAAAZaSnF6sAAAEAwBHMEUCIDBtMsYo4tHnRZfRGC+8oD/E/b+nwHWroPbukzHTzVb0AiEA6MD7ts99qy91Iw/zCLBI6elEIL6dd0NUBgz7JKqsvDYwDQYJKoZIhvcNAQELBQADggEBAJtjIkCtUtY6Gz5Pxf3aG6m0e7dETQqGZgbYBOzQKLdA6VI1MsOC9WWLasvz4sVwNaeYmxMGPJM8V1uLgY6eGdFtg2ELF1skK3YyfV4yA2X64GlNEcCxXeF4vSQpxEm23KTFNklrtJuYkpcdMvxBUkmXJiVsAiOZ1/igQJqS1DcRLd4wkmUfBY/Fb/Xuhj1RY6iMk97xbSzwHzip1zuXVLl5Pisl+wLyc9EAFhKc9xiqhUev+xBNDQNphlQLmn7SJi1cAdmDRGhOl9+Wokhmt6Oyzve+BYWtCTp9g006fAtNeXdoaKHDG1iwglotZKE9I7iS9ViW+G84TOzUXQLOvpBmCjImkVxP+7sgiYWmMt8FvcOXmlQiTNWFiWlrbpbqgwAAAAAAAAYXMIIGEzCCA/ugAwIBAgIQfVtRJrR2uhHbdBYLvFMNpzANBgkqhkiG9w0BAQwFADCBiDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0plcnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNVBAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTgxMTAyMDAwMDAwWhcNMzAxMjMxMjM1OTU5WjCBjzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMTcwNQYDVQQDEy5TZWN0aWdvIFJTQSBEb21haW4gVmFsaWRhdGlvbiBTZWN1cmUgU2VydmVyIENBMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1nMz1tc8INAA0hdFuNY+B6I/x0HuMjDJsGz99J/LEpgPLT+NTQEMgg8Xf2Iu6bhIefsWg06t1zIlk7cHv7lQP6lMw0Aq6Tn/2YHKHxYyQdqAJrkjeocgHuP/IJo8lURvh3UGkEC0MpMWCRAIIz7S3YcPb11RFGoKacVPAXJpz9OTTG0EoKMbgn6xmrntxZ7FN3ifmgg0+1YuWMQJDgZkW7w33PGfKGioVrCSo1yfu4iYCBskHaswha6vsC6eep3BwEIc4gLw6uBK0u+QDrTBQBbwb4VCSmT3pDCg/r8uoydajotYuK3DGReEY+1vVv2Dy2A0xHS+5p3b4eTlygxfFQIDAQABo4IBbjCCAWowHwYDVR0jBBgwFoAUU3m/WqorSs9UgOHYm8Cd8rIDZsswHQYDVR0OBBYEFI2MXsRUrYrhd+mb+ZsF4bgBjWHhMA4GA1UdDwEB/wQEAwIBhjASBgNVHRMBAf8ECDAGAQH/AgEAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjAbBgNVHSAEFDASMAYGBFUdIAAwCAYGZ4EMAQIBMFAGA1UdHwRJMEcwRaBDoEGGP2h0dHA6Ly9jcmwudXNlcnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FDZXJ0aWZpY2F0aW9uQXV0aG9yaXR5LmNybDB2BggrBgEFBQcBAQRqMGgwPwYIKwYBBQUHMAKGM2h0dHA6Ly9jcnQudXNlcnRydXN0LmNvbS9VU0VSVHJ1c3RSU0FBZGRUcnVzdENBLmNydDAlBggrBgEFBQcwAYYZaHR0cDovL29jc3AudXNlcnRydXN0LmNvbTANBgkqhkiG9w0BAQwFAAOCAgEAMr9hvQ5Iw0/HukdN+Jx4GQHcEx2Ab/zDcLRSmjEzmldS+zGea6TvVKqJjUAXaPgREHzSyrHxVYbH7rM2kYb2OVG/Rr8PoLq0935JxCo2F57kaDl6r5ROVm+yezu/Coa9zcV3HAO4OLGiH19+24rcRki2aArPsrW04jTkZ6k4Zgle0rj8nSg6F0AnwnJOKf0hPHzPE/uWLMUxRP0T7dWbqWlod3zu4f+k+TY4CFM5ooQ0nBnzvg6s1SQ36yOoeNDT5++SR2RiOSLvxvcRviKFxmZEJCaOEDKNyJOuB56DPi/Z+fVGjmO+wea03KbNIaiGCpXZLoUmGv38sbZXQm2V0TP2ORQGgkE49Y9Y3IBbpNV9lXj9p5v//cWoaasm56ekBYdbqbe4oyALl6lFhd2zi+WJN44pDfwGF/Y4QA5C5BIG+3vzxhFoYt/jmPQT2BVPi7Fp2RBgvGQq6jG35LWjOhSbJuMLe/0CjraZwTiXWTb2qHSihrZe68Zk6s+go/lunrotEbaGmAhYLcmsJWTyXnW0OMGuf1pGg+pRyrbxmRE1a6Vqe8YAsOf4vmSyrcjC8azjUeqkk+B5yOGBQMkKW+ESPMFgKuOXwIlCypTPRpgSabuY0MLTDXJLR27lk8QyKGOHQ+SwMj4K00u/I5sUKUErmgQfky3xxzlIPK1aEn9mCjImkVxP+7sgiYWmMt8FvcOXmlQiTNWFiWlrbpbqgwAAAAAAAAXiMIIF3jCCA8agAwIBAgIQAf1tMPyjylGoG7xkDjUDLTANBgkqhkiG9w0BAQwFADCBiDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0plcnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNVBAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwHhcNMTAwMjAxMDAwMDAwWhcNMzgwMTE4MjM1OTU5WjCBiDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0plcnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNVBAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCAEmUXNg7D2wiz0KxXDXbtzSfTTK1Qg2HiqiBNCS1kCdzOiZ/MPans9s/B3PHTsdZ7NygRK0faOca8Ohm0X6a9fZ2jY0K2dvKpOyuR+OJv0OwWIJAJPuLodMkYtJHUYmTbf6MG8YgYapAiPLz+E/CHFHv25B+O1ORRxhFnRghRy4YUVD+8M/5+bJz/Fp0YvVGONaanZshyZ9shZrHUm3gDwFA66Mzw3LyeTP6vBZY1H1dat//O+T23LLb2VN3I5xI6Ta5MirdcmrS3ID3KfyI0rn47aGYBROcBTkZTmzNg95S+UzeQc0PzMsNT79uq/nROacdrjGCT3sTHDN/hMq7MkztReJVni+49Vv4M0GkPGw/zJSZrM233bkf6c0Plfg6lZrEpfDKEY1WJxA3Bk1QwGROs0303p+tdOmw1XNtB1xLaqUkL39iAigmTYo61Zs8liM2EuLE/pDkP2QKe6xJMlXzzawWpXhaDzLhn4ugTncxbgtNMs+1b/97lc6wjOy0AvzVVdAlJ2ElYGn+SNuZRkg7zJn0cTRe8yexDJtC/QV9AqURE9JnnV4eeUB9XVKg+/XRjL7FQZQnmWEIuQxpMtPAlR1n6BB6T1CZGSlCBst6+eLf8ZxXhyVeEHg9j1uliutZfVS7qXMYoCAQlObgOK6nyTJccBz8NUvXt7y+CDwIDAQABo0IwQDAdBgNVHQ4EFgQUU3m/WqorSs9UgOHYm8Cd8rIDZsswDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wDQYJKoZIhvcNAQEMBQADggIBAFzUfA3P9wF9QZllDHPFUp/L+M+ZBn8b2kMVn54CVVeWFPFSPCeHlCjtHzoBN6J2/FNQwISbxmtOuowhT6KOVWKR82kV2LyI48SqC/3vqOlLVSoGIG1VeCkZ7l8wXEskEVX/JJpuXior7gtNn3/3ATiUFJVDBwn7YKnuHKsSjKCaXqeYalltiz8I+8jRRa8YFWSQEg9zKC7F4iRO/Fjs8PRF/iKz6y+O0tlFYQXBl2+odnKPi4w2r78NBc5xjeambx9spnFixdjQg3IM8WcRiQycE0xyNN+81XHfqnHd4blsjDwSXWXavVcStkNr/+XeTWYRUc+ZruwXtuhxkYzeSf7dNXGiFSeUHM9h4ya7b6NnJSFd5t0dCy5oGzuCr+yDZ4XUmFF0sbmZgIn/f3gZXHlKYC6SQK5MNyosycdiyA5d9zZbyuAlJQG03RoHnHcAP9Dc1ew91Pq7P8yF1m9/qS3fuQL39ZeatTXaw2ewh0qpKJ4jjv9cJ2vhsE/zB+4ALtRZh8tSQZXq9EfX7mRBVXyNWQKV3WKdwrnuWih0hKWbt5DHDAff9Yk2dDLWKMGwsAvgnEzDHNb842m1R0aBL6KCq9NjRHDEjf8tM7qtj3u1cIiuPhnPQCjY/MiQu12ZIvVS5ljFH4gxQ+6IHdfGjjxDah2nGN59PRbxYvnKkKj9AARmCjImkVxP+7sgiYWmMt8FvcOXmlQiTNWFiWlrbpbqgwAAAAAAAAZJMIIGRTCCBS2gAwIBAgIQK0t6v1/bf512qNgM2Ah/YDANBgkqhkiG9w0BAQsFADCBjzELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEYMBYGA1UEChMPU2VjdGlnbyBMaW1pdGVkMTcwNQYDVQQDEy5TZWN0aWdvIFJTQSBEb21haW4gVmFsaWRhdGlvbiBTZWN1cmUgU2VydmVyIENBMB4XDTI1MDUwMjAwMDAwMFoXDTI2MDYwMTIzNTk1OVowHTEbMBkGA1UEAxMSZnJlZWRucy5hZnJhaWQub3JnMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnuoPaIHGZMxYy9wHMrHhyFzUsQvTlnY2wayCYtGaur+CZ/htStWg8UNUOdvDtr7Qkf9zSU8KJJecnYZY1JK2WMSn0+NMvlIxO2eNA0iIsxIeSP1g6CpZtsowxiuqqm3/UIh2XmPmfvGLQAOhcZQBmNQWsEVLoVzLBHqLdMwKARQXCC/5zlfhBE60wmd+Dwu5TPaM8Qd7RCkpbZQty+ln++9paNT5EQQVMpYUSW+FXyc7EXEAWZLxhEuvWOiJW9oE0TxVqbFLmIQu1LQErwKtpdC/jaaIQx4aX5UlS2WIOl1y1hsgYaWkZI72641qURHVH62gNwwXJYppLCK3Tl1e7wIDAQABo4IDDDCCAwgwHwYDVR0jBBgwFoAUjYxexFStiuF36Zv5mwXhuAGNYeEwHQYDVR0OBBYEFOZOa6QK4LHn7zRBr3ko2Red74dCMA4GA1UdDwEB/wQEAwIFoDAMBgNVHRMBAf8EAjAAMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggrBgEFBQcDAjBJBgNVHSAEQjBAMDQGCysGAQQBsjEBAgIHMCUwIwYIKwYBBQUHAgEWF2h0dHBzOi8vc2VjdGlnby5jb20vQ1BTMAgGBmeBDAECATCBhAYIKwYBBQUHAQEEeDB2ME8GCCsGAQUFBzAChkNodHRwOi8vY3J0LnNlY3RpZ28uY29tL1NlY3RpZ29SU0FEb21haW5WYWxpZGF0aW9uU2VjdXJlU2VydmVyQ0EuY3J0MCMGCCsGAQUFBzABhhdodHRwOi8vb2NzcC5zZWN0aWdvLmNvbTA1BgNVHREELjAsghJmcmVlZG5zLmFmcmFpZC5vcmeCFnd3dy5mcmVlZG5zLmFmcmFpZC5vcmcwggF+BgorBgEEAdZ5AgQCBIIBbgSCAWoBaAB1AJaXZL9VWJet90OHaDcIQnfp8DrV9qTzNm5GpD8PyqnGAAABlpKcXqEAAAQDAEYwRAIgS8K8V/3LX2qpHrd1qUvpk9Xh8U76fm+qQ0k4+cURDUUCIB6+ngakrAkKUd/TEpyY0EfPDofrnD7qwmlvl/q9ehDZAHcAGYbUxyiqb/66A294Kk0BkarOLXIxD67OXXBBLSVMx9QAAAGWkpxegAAABAMASDBGAiEA0gRQXZP1cjbotsSB69tF7cC3oGc0WaEHqhLkZQpnNuECIQCrnqgXzwpGxYDb+xn9fY63yfjDLIhB7L5ZDDpBuA42sAB2AA5XlLzzrqk+MxssmQez95Dfm8I9cTIl3SGpJaxhxU4hAAABlpKcXqwAAAQDAEcwRQIgMG0yxiji0edFl9EYL7ygP8T9v6fAdaug9u6TMdPNVvQCIQDowPu2z32rL3UjD/MIsEjp6UQgvp13Q1QGDPskqqy8NjANBgkqhkiG9w0BAQsFAAOCAQEAm2MiQK1S1jobPk/F/dobqbR7t0RNCoZmBtgE7NAot0DpUjUyw4L1ZYtqy/PixXA1p5ibEwY8kzxXW4uBjp4Z0W2DYQsXWyQrdjJ9XjIDZfrgaU0RwLFd4Xi9JCnESbbcpMU2SWu0m5iSlx0y/EFSSZcmJWwCI5nX+KBAmpLUNxEt3jCSZR8Fj8Vv9e6GPVFjqIyT3vFtLPAfOKnXO5dUuXk+KyX7AvJz0QAWEpz3GKqFR6/7EE0NA2mGVAuaftImLVwB2YNEaE6X35aiSGa3o7LO974Fha0JOn2DTTp8C015d2hoocMbWLCCWi1koT0juJL1WJb4bzhM7NRdAs6+kGYKMiaRXE/7uyCJhaYy3wW9w5eaVCJM1YWJaWtuluqDAAAAAAAABhcwggYTMIID+6ADAgECAhB9W1EmtHa6Edt0Fgu8Uw2nMA0GCSqGSIb3DQEBDAUAMIGIMQswCQYDVQQGEwJVUzETMBEGA1UECBMKTmV3IEplcnNleTEUMBIGA1UEBxMLSmVyc2V5IENpdHkxHjAcBgNVBAoTFVRoZSBVU0VSVFJVU1QgTmV0d29yazEuMCwGA1UEAxMlVVNFUlRydXN0IFJTQSBDZXJ0aWZpY2F0aW9uIEF1dGhvcml0eTAeFw0xODExMDIwMDAwMDBaFw0zMDEyMzEyMzU5NTlaMIGPMQswCQYDVQQGEwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxmb3JkMRgwFgYDVQQKEw9TZWN0aWdvIExpbWl0ZWQxNzA1BgNVBAMTLlNlY3RpZ28gUlNBIERvbWFpbiBWYWxpZGF0aW9uIFNlY3VyZSBTZXJ2ZXIgQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDWczPW1zwg0ADSF0W41j4Hoj/HQe4yMMmwbP30n8sSmA8tP41NAQyCDxd/Yi7puEh5+xaDTq3XMiWTtwe/uVA/qUzDQCrpOf/ZgcofFjJB2oAmuSN6hyAe4/8gmjyVRG+HdQaQQLQykxYJEAgjPtLdhw9vXVEUagppxU8BcmnP05NMbQSgoxuCfrGaue3FnsU3eJ+aCDT7Vi5YxAkOBmRbvDfc8Z8oaKhWsJKjXJ+7iJgIGyQdqzCFrq+wLp56ncHAQhziAvDq4ErS75AOtMFAFvBvhUJKZPekMKD+vy6jJ1qOi1i4rcMZF4Rj7W9W/YPLYDTEdL7mndvh5OXKDF8VAgMBAAGjggFuMIIBajAfBgNVHSMEGDAWgBRTeb9aqitKz1SA4dibwJ3ysgNmyzAdBgNVHQ4EFgQUjYxexFStiuF36Zv5mwXhuAGNYeEwDgYDVR0PAQH/BAQDAgGGMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0lBBYwFAYIKwYBBQUHAwEGCCsGAQUFBwMCMBsGA1UdIAQUMBIwBgYEVR0gADAIBgZngQwBAgEwUAYDVR0fBEkwRzBFoEOgQYY/aHR0cDovL2NybC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJTQUNlcnRpZmljYXRpb25BdXRob3JpdHkuY3JsMHYGCCsGAQUFBwEBBGowaDA/BggrBgEFBQcwAoYzaHR0cDovL2NydC51c2VydHJ1c3QuY29tL1VTRVJUcnVzdFJTQUFkZFRydXN0Q0EuY3J0MCUGCCsGAQUFBzABhhlodHRwOi8vb2NzcC51c2VydHJ1c3QuY29tMA0GCSqGSIb3DQEBDAUAA4ICAQAyv2G9DkjDT8e6R034nHgZAdwTHYBv/MNwtFKaMTOaV1L7MZ5rpO9UqomNQBdo+BEQfNLKsfFVhsfuszaRhvY5Ub9Gvw+gurT3fknEKjYXnuRoOXqvlE5Wb7J7O78Khr3NxXccA7g4saIfX37bitxGSLZoCs+ytbTiNORnqThmCV7SuPydKDoXQCfCck4p/SE8fM8T+5YsxTFE/RPt1ZupaWh3fO7h/6T5NjgIUzmihDScGfO+DqzVJDfrI6h40NPn75JHZGI5Iu/G9xG+IoXGZkQkJo4QMo3Ik64HnoM+L9n59UaOY77B5rTcps0hqIYKldkuhSYa/fyxtldCbZXRM/Y5FAaCQTj1j1jcgFuk1X2VeP2nm//9xahpqybnp6QFh1upt7ijIAuXqUWF3bOL5Yk3jikN/AYX9jhADkLkEgb7e/PGEWhi3+OY9BPYFU+LsWnZEGC8ZCrqMbfktaM6FJsm4wt7/QKOtpnBOJdZNvaodKKGtl7rxmTqz6Cj+W6eui0RtoaYCFgtyawlZPJedbQ4wa5/WkaD6lHKtvGZETVrpWp7xgCw5/i+ZLKtyMLxrONR6qST4HnI4YFAyQpb4RI8wWAq45fAiULKlM9GmBJpu5jQwtMNcktHbuWTxDIoY4dD5LAyPgrTS78jmxQpQSuaBB+TLfHHOUg8rVoSf2YKMiaRXE/7uyCJhaYy3wW9w5eaVCJM1YWJaWtuluqDAAAAAAAABYUwggWBMIIEaaADAgECAhA5ckQ6+SK3UdfTbBDdMTWVMA0GCSqGSIb3DQEBDAUAMHsxCzAJBgNVBAYTAkdCMRswGQYDVQQIDBJHcmVhdGVyIE1hbmNoZXN0ZXIxEDAOBgNVBAcMB1NhbGZvcmQxGjAYBgNVBAoMEUNvbW9kbyBDQSBMaW1pdGVkMSEwHwYDVQQDDBhBQUEgQ2VydGlmaWNhdGUgU2VydmljZXMwHhcNMTkwMzEyMDAwMDAwWhcNMjgxMjMxMjM1OTU5WjCBiDELMAkGA1UEBhMCVVMxEzARBgNVBAgTCk5ldyBKZXJzZXkxFDASBgNVBAcTC0plcnNleSBDaXR5MR4wHAYDVQQKExVUaGUgVVNFUlRSVVNUIE5ldHdvcmsxLjAsBgNVBAMTJVVTRVJUcnVzdCBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkwggIiMA0GCSqGSIb3DQEBAQUAA4ICDwAwggIKAoICAQCAEmUXNg7D2wiz0KxXDXbtzSfTTK1Qg2HiqiBNCS1kCdzOiZ/MPans9s/B3PHTsdZ7NygRK0faOca8Ohm0X6a9fZ2jY0K2dvKpOyuR+OJv0OwWIJAJPuLodMkYtJHUYmTbf6MG8YgYapAiPLz+E/CHFHv25B+O1ORRxhFnRghRy4YUVD+8M/5+bJz/Fp0YvVGONaanZshyZ9shZrHUm3gDwFA66Mzw3LyeTP6vBZY1H1dat//O+T23LLb2VN3I5xI6Ta5MirdcmrS3ID3KfyI0rn47aGYBROcBTkZTmzNg95S+UzeQc0PzMsNT79uq/nROacdrjGCT3sTHDN/hMq7MkztReJVni+49Vv4M0GkPGw/zJSZrM233bkf6c0Plfg6lZrEpfDKEY1WJxA3Bk1QwGROs0303p+tdOmw1XNtB1xLaqUkL39iAigmTYo61Zs8liM2EuLE/pDkP2QKe6xJMlXzzawWpXhaDzLhn4ugTncxbgtNMs+1b/97lc6wjOy0AvzVVdAlJ2ElYGn+SNuZRkg7zJn0cTRe8yexDJtC/QV9AqURE9JnnV4eeUB9XVKg+/XRjL7FQZQnmWEIuQxpMtPAlR1n6BB6T1CZGSlCBst6+eLf8ZxXhyVeEHg9j1uliutZfVS7qXMYoCAQlObgOK6nyTJccBz8NUvXt7y+CDwIDAQABo4HyMIHvMB8GA1UdIwQYMBaAFKARCiM+lvEH7OKvKe+CpX/QMKS0MB0GA1UdDgQWBBRTeb9aqitKz1SA4dibwJ3ysgNmyzAOBgNVHQ8BAf8EBAMCAYYwDwYDVR0TAQH/BAUwAwEB/zARBgNVHSAECjAIMAYGBFUdIAAwQwYDVR0fBDwwOjA4oDagNIYyaHR0cDovL2NybC5jb21vZG9jYS5jb20vQUFBQ2VydGlmaWNhdGVTZXJ2aWNlcy5jcmwwNAYIKwYBBQUHAQEEKDAmMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5jb21vZG9jYS5jb20wDQYJKoZIhvcNAQEMBQADggEBABiHUdx0IT2ciuAntzPQLszs8ObLXhHeIm+bdY6ecv7k1v6qH5yWLe8DSn6u9I1vcjxDO8A/67jfXKqpxq7y/Njuo3tD9oY2fBTgzfT3P/7euLSK8JGW/v1DZH79zNIBoX19+BkZyUIrE79Yi7qkomYEdoiRTgyJFM6iTckys7roFBq8cfFb8EELmAAKIgMQ5Qyx+c2SNxntO/HkOrb5RRMmda+7qu8/e3c70sQCkT0ZANMXXDnbP3sYDUXNk4WWL13fWRZPP1G91UUYP+1KjugGYXQjFrUNUHMnREd/EF2JKmuFMRTE6KlqTIC8anjPuH+OdnKZDJ3+15EIFqGjX5VmCjImkVxP+7sgiYWmMt8FvcOXmlQiTNWFiWlrbpbqgwAAAAAAAAQ2MIIEMjCCAxqgAwIBAgIBATANBgkqhkiG9w0BAQUFADB7MQswCQYDVQQGEwJHQjEbMBkGA1UECAwSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHDAdTYWxmb3JkMRowGAYDVQQKDBFDb21vZG8gQ0EgTGltaXRlZDEhMB8GA1UEAwwYQUFBIENlcnRpZmljYXRlIFNlcnZpY2VzMB4XDTA0MDEwMTAwMDAwMFoXDTI4MTIzMTIzNTk1OVowezELMAkGA1UEBhMCR0IxGzAZBgNVBAgMEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBwwHU2FsZm9yZDEaMBgGA1UECgwRQ29tb2RvIENBIExpbWl0ZWQxITAfBgNVBAMMGEFBQSBDZXJ0aWZpY2F0ZSBTZXJ2aWNlczCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAL5AnfRu4ep2hxxNRUSOvkbIgwadwSr+GB+O5AL686tdUIoWMQuaBtDFcCLNSS1UY8y2bmhGC1Pqy0wkwLxyTurxFa70VJoSCsN6sjNg4tqJVfMiWPPe3M/vg4aijJRPn2jymJBGhCfHdr/jzDUsi14HZGWCwEiwqJH5YZ92IFCokcdmtet4YgNW8IoaE+oxox6gmf049vYnMlhvB/VruPsUK6+3qszWY19zjNoFmag4qMsXeDZRrOme9Hg6jc8P2ULimAyrL58OAd7vn5lJ8S3frHRNG5i1R8XlKdH5kBjHYpy+g8cmez6KJcfA3Z3mNWgQIJ2P2N7Sw4ScDV7oL8kCAwEAAaOBwDCBvTAdBgNVHQ4EFgQUoBEKIz6W8Qfs4q8p74Klf9AwpLQwDgYDVR0PAQH/BAQDAgEGMA8GA1UdEwEB/wQFMAMBAf8wewYDVR0fBHQwcjA4oDagNIYyaHR0cDovL2NybC5jb21vZG9jYS5jb20vQUFBQ2VydGlmaWNhdGVTZXJ2aWNlcy5jcmwwNqA0oDKGMGh0dHA6Ly9jcmwuY29tb2RvLm5ldC9BQUFDZXJ0aWZpY2F0ZVNlcnZpY2VzLmNybDANBgkqhkiG9w0BAQUFAAOCAQEACFb8AvCb6P+k+tZ7xkSAzk/ExfYAWMymtrwUSWgEdujm7l3sAg9g1o1QGE8mTgHj5rCl7r+8dFRBv/38ErjHT1r0iWAFf2C3BUrz9vHCv8S5dIa2LX1rzNLzRt0vxuBqw8M0Ayx9lt1awg6nCpnBBYurDC/zXDrPbDdVCYfeU0BsWO/8tqtlbgT2G9w84FoVxp7Z8VlIMCFlA2zs6SFz7JsDoeA3raAVGI/6ugLOpyypEBMs1OUIJqsil2D4kF501KKaU73yqWjgom7C12yxow+ev+to51byrvLjKzg6CYG1a4XXvi3tPxq3smPi9WIsgtRqAEFQ8TmDn5XpNpaYbgABAAAACGh0dHAvMS4xAAEAAAAAKXRsc2ZsYWdzMHgwMDAwMDAwMDpmcmVlZG5zLmFmcmFpZC5vcmc6NDQzAAA= request-method GET response-head HTTP/1.1 200 OK
+Server: nginx
+Date: Fri, 30 Jan 2026 19:51:05 GMT
+Content-Type: application/javascript; charset=utf-8
+Content-Length: 16376
+Last-Modified: Mon, 04 Jul 2005 02:20:08 GMT
+ETag: "42c89cd8-3ff8"
+X-Cache: MISS
+Accept-Ranges: bytes
+ original-response-headers Server: nginx
+Date: Fri, 30 Jan 2026 19:51:05 GMT
+Content-Type: application/javascript; charset=utf-8
+Content-Length: 16376
+Connection: keep-alive
+Last-Modified: Mon, 04 Jul 2005 02:20:08 GMT
+ETag: "42c89cd8-3ff8"
+X-Cache: MISS
+Accept-Ranges: bytes
+ ctid 2 net-response-time-onstart 285 net-response-time-onstop 285 alt-data 1;16376,javascript/moz-script-bytecode-20260116180059-8l alt-data-from-child 1  ;

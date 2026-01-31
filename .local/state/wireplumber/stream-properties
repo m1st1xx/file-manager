@@ -1,0 +1,8 @@
+[stream-properties]
+Output/Audio:media.role:Notification={"mute":false, "channelMap":["FL", "FR"], "channelVolumes":[1.000000, 1.000000], "volume":1.000000}
+Output/Audio:application.name:Firefox={"channelVolumes":[1.000000, 1.000000], "channelMap":["FL", "FR"], "mute":false, "volume":1.000000}
+Input/Audio:application.id:org.kde.plasma-pa={"channelVolumes":[1.000000], "channelMap":["MONO"], "mute":false, "volume":1.000000}
+Input/Audio:media.role:Music={"volume":1.000000, "channelVolumes":[1.000000, 1.000000], "channelMap":["FL", "FR"], "mute":false}
+Output/Audio:media.role:alert={"volume":1.000000, "channelMap":["FL", "FR"], "mute":false, "channelVolumes":[1.000000, 1.000000]}
+Output/Audio:media.role:Game={"mute":false, "channelMap":["FL", "FR"], "volume":1.000000, "channelVolumes":[1.000000, 1.000000]}
+Input/Audio:media.role:Game={"mute":false, "channelMap":["MONO"], "channelVolumes":[1.000000], "volume":1.000000}

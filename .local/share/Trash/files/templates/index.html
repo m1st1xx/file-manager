@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Учебные файлы — Вход</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <h1>Учебные файлы</h1>
+
+    <!-- Переключатель -->
+    <div class="tabs">
+      <button id="btn-login" class="tab active">Войти</button>
+      <button id="btn-register" class="tab">Создать аккаунт</button>
+    </div>
+
+    <!-- Форма -->
+    <form id="auth-form" class="form" method="POST" action="/login">
+  <input type="text"     name="first_name"    id="first-name"    placeholder="Имя" required />
+  <input type="text"     name="last_name"     id="last-name"     placeholder="Фамилия" required />
+  <input type="text"     name="group_number"  id="group-number"  placeholder="Номер группы" required />
+  <input type="password" name="password"      id="password"      placeholder="Пароль" required />
+
+  <button type="submit" id="submit-btn">Войти</button>
+    </form>
+
+    <!-- Показ ошибок/успехов -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="alerts">
+      {% for category, message in messages %}
+        <div class="alert {{ category }}">{{ message }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+
+  </div>
+
+  <script>
+  const form = document.getElementById('auth-form');
+  const submitBtn = document.getElementById('submit-btn');
+
+  document.getElementById('btn-login').addEventListener('click', () => {
+    submitBtn.textContent = 'Войти';
+    form.action = '/login';
+    setActiveTab('btn-login');
+  });
+
+  document.getElementById('btn-register').addEventListener('click', () => {
+    submitBtn.textContent = 'Создать аккаунт';
+    form.action = '/register';
+    setActiveTab('btn-register');
+  });
+
+  function setActiveTab(activeId) {
+    document.querySelectorAll('.tab').forEach(btn => btn.classList.remove('active'));
+    document.getElementById(activeId).classList.add('active');
+  }
+
+  // Убедимся, что при первой загрузке форма направлена на /login
+  form.action = '/login';
+  setActiveTab('btn-login');
+</script>
+</body>
+</html>

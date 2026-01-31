@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Выберите предмет</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <div class="container">
+    <h1>{{ 'Скачать файлы' if mode == 'download' else 'Загрузить файлы' }}</h1>
+    <div class="subject-list">
+      {% for subject in SUBJECTS %}
+        <a href="/{{ mode }}/{{ subject }}" class="subject-btn">{{ subject }}</a>
+      {% endfor %}
+    </div>
+    <p><a href="{{ url_for('main') }}">← Назад</a></p>
+  </div>
+</body>
+</html>

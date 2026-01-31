@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<span style="font-family:monospace"><span style="color:#000000;background-color:#ffffff;">DEPRECATED: The legacy builder is deprecated and will be removed in a future release.</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;"> &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Install the buildx component to build images with BuildKit:</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;"> &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;https://docs.docker.com/go/buildx/</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;">failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon i</span><br><span style="color:#000000;background-color:#ffffff;">s running: dial unix /var/run/docker.sock: connect: no such file or directory</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;">[m1st@m1stshelter file-manager]$ docker build -t school-file-manager .</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;">DEPRECATED: The legacy builder is deprecated and will be removed in a future release.</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;"> &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;Install the buildx component to build images with BuildKit:</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;"> &#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;https://docs.docker.com/go/buildx/</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;">time="2026-01-31T02:31:14+03:00" level=error msg="Can't add file /home/m1st/file-manager/.dockerignore to tar: io: r</span><br><span style="color:#000000;background-color:#ffffff;">ead/write on closed pipe"</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;">time="2026-01-31T02:31:14+03:00" level=error msg="Can't close tar writer: io: read/write on closed pipe"</span><span style="color:#000000;background-color:#ffffff;">
+</span><br><span style="color:#000000;background-color:#ffffff;">failed to connect to the docker API at unix:///var/run/docker.sock; check if the path is correct and if the daemon i</span><br><span style="color:#000000;background-color:#ffffff;">s running: dial unix /var/run/docker.sock: connect: no such file or directory</span><br><span style="color:#000000;background-color:#ffffff;">
+</span><br></span></body>
+</html>

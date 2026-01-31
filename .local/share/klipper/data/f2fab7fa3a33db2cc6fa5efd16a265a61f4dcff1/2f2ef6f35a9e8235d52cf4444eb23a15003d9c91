@@ -1,0 +1,6 @@
+<meta http-equiv="content-type" content="text/html; charset=utf-8"><h1>BuildError</h1>
+<div class="detail">
+  <p class="errormsg">werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'upload_select'. Did you mean 'download_select' instead?
+</p>
+</div>
+<h2 class="traceback" style="cursor: pointer;">Traceback <em>(most recent call last)</em></h2>

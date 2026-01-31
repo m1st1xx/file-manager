@@ -1,0 +1,1039 @@
+<html>
+  <head>
+    <title>Indexing diagnostics of 'file-manager'</title>
+    <style>body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+
+table {
+  width: 80%;
+}
+
+table.activity-table {
+  width: 100%;
+}
+
+table.narrow-activity-table {
+  width: 80%;
+}
+
+table.two-columns td {
+  width: 50%;
+}
+
+th, td {
+  padding: 3px;
+}
+
+th {
+  background: lightgrey;
+}
+
+td {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.stats-content {
+  margin-left: 20%;
+}
+
+.stats-activity-content {
+  margin-left: 20%;
+  margin-right: 5%;
+}
+
+.aggregate-report-content {
+  margin-left: 10%;
+}
+
+.aggregate-activity-report-content {
+  margin-left: 15%;
+  margin-right: 15%;
+}
+
+.aggregate-header {
+  padding-top: 1em;
+  padding-bottom: 1em;
+  margin-bottom: 0;
+}
+
+.table-with-margin{
+  margin-top: 1em;
+  margin-bottom: 2em;
+}
+
+.navigation-bar {
+  width: 15%;
+  background-color: lightgrey;
+  position: fixed;
+  height: 100%;
+}
+
+div.navigation-bar ul {
+  list-style-type: none;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  font-size: 24px;
+}
+
+div.navigation-bar ul li a, label {
+  display: block;
+  color: #000;
+  padding: 8px 20px;
+  text-decoration: none;
+}
+
+label input {
+  margin-left: 10px;
+  width: 20px;
+  height: 20px;
+}
+
+div.navigation-bar ul li a:hover {
+  background-color: #555;
+  color: white;
+}
+
+.minor-data {}
+
+.invisible {
+  display: none;
+}
+
+.jetbrains-logo {
+  width: 50%;
+  bottom: 5%;
+  position: absolute;
+  left: 20%;
+}
+
+.centered-text {
+  text-align: center;
+}
+
+.linkable-table-row:hover {
+  background: #f2f3ff;
+  outline: none;
+  cursor: pointer;
+}
+
+.scanning-table-row {
+  background-color: aliceblue;
+}
+
+.not-applicable-data{
+  color: darkgrey;
+}</style>
+    <script>document.addEventListener("DOMContentLoaded", () => {
+  const rows = document.getElementsByClassName("linkable-table-row")
+  for (const row of rows) {
+    const href = row.getAttribute("href")
+    row.addEventListener("click", () => {
+      window.open(href, "_blank");
+    });
+  }
+});</script>
+  </head>
+  <body>
+    <div class="aggregate-activity-report-content">
+      <h1 class="aggregate-header">file-manager</h1>
+      <div>All durations are wall time; total and content loading time include pauses
+        <table class="centered-text table-with-margin activity-table"><caption style="caption-side: bottom; text-align: right; font-size: 14px">Click for details</caption>
+          <thead>
+            <tr>
+              <th colspan="14">History of scannings and indexings</th>
+            </tr>
+            <tr>
+              <th colspan="7">Time</th>
+              <th colspan="5">Files</th>
+              <th rowspan="2">Scanning ID(s)</th>
+              <th rowspan="2">Scanning Type</th>
+            </tr>
+            <tr>
+              <th>Started</th>
+              <th>Started dumb mode</th>
+              <th>Finished</th>
+              <th>Total&nbsp;time</th>
+              <th>Time spent on pause</th>
+              <th>Full dumb mode time</th>
+              <th>Dumb mode time w/o pauses</th>
+              <th>Scanned</th>
+              <th>Shared indexes (w/o content loading)</th>
+              <th>Scheduled for indexing</th>
+              <th>Shared indexes (content loaded)</th>
+              <th>Total indexed (shared indexes included)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-31-02-55-04.585.html">
+              <td>02:55:04 31 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>02:55:04 31 янв.</td>
+              <td>83 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-31-02-53-24.619.html">
+              <td>02:53:24 31 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>02:53:24 31 янв.</td>
+              <td>16 ms</td>
+              <td>2 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-31-02-53-24.293.html">
+              <td>02:53:23 31 янв.</td>
+              <td>02:53:23 31 янв.</td>
+              <td>02:53:24 31 янв.</td>
+              <td>772 ms</td>
+              <td>0</td>
+              <td>772 ms</td>
+              <td>772 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>1</td>
+              <td>46<br>(incl. 46 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-31-02-48-17.489.html">
+              <td>02:48:17 31 янв.</td>
+              <td>02:48:17 31 янв.</td>
+              <td>02:48:17 31 янв.</td>
+              <td>&lt; 1 ms</td>
+              <td>0</td>
+              <td>&lt; 1 ms</td>
+              <td>&lt; 1 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>0</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-31-02-48-17.422.html">
+              <td>02:48:17 31 янв.</td>
+              <td>02:48:17 31 янв.</td>
+              <td>02:48:17 31 янв.</td>
+              <td>322 ms</td>
+              <td>0</td>
+              <td>322 ms</td>
+              <td>322 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>1</td>
+              <td>53<br>(incl. 53 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-31-02-47-46.944.html">
+              <td>02:47:46 31 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>02:47:46 31 янв.</td>
+              <td>21 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-30-22-34-42.257.html">
+              <td>22:34:42 30 янв.</td>
+              <td>22:34:42 30 янв.</td>
+              <td>22:34:42 30 янв.</td>
+              <td>5 ms</td>
+              <td>0</td>
+              <td>5 ms</td>
+              <td>5 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>0</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-30-22-33-26.544.html">
+              <td>22:33:26 30 янв.</td>
+              <td>22:33:26 30 янв.</td>
+              <td>22:33:26 30 янв.</td>
+              <td>189 ms</td>
+              <td>0</td>
+              <td>189 ms</td>
+              <td>189 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>2<br>(incl. 1 changed in VFS)<br>(incl. 1 with nothing to write)</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-30-22-33-26.174.html">
+              <td>22:33:25 30 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>22:33:26 30 янв.</td>
+              <td>347 ms</td>
+              <td>13 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>10712</td>
+              <td>0</td>
+              <td>1</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>full on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-30-20-41-49.642.html">
+              <td>20:41:49 30 янв.</td>
+              <td>20:41:49 30 янв.</td>
+              <td>20:41:49 30 янв.</td>
+              <td>275 ms</td>
+              <td>0</td>
+              <td>275 ms</td>
+              <td>275 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>2<br>(incl. 1 changed in VFS)<br>(incl. 1 with nothing to write)</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-30-20-41-48.888.html">
+              <td>20:41:48 30 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>20:41:48 30 янв.</td>
+              <td>42 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>2</td>
+              <td>0</td>
+              <td>1</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-30-19-18-20.726.html">
+              <td>19:18:20 30 янв.</td>
+              <td>19:18:20 30 янв.</td>
+              <td>19:18:20 30 янв.</td>
+              <td>162 ms</td>
+              <td>0</td>
+              <td>162 ms</td>
+              <td>162 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>2<br>(incl. 1 changed in VFS)<br>(incl. 1 with nothing to write)</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-30-19-18-20.368.html">
+              <td>19:18:19 30 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>19:18:20 30 янв.</td>
+              <td>564 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>10709</td>
+              <td>0</td>
+              <td>1</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>full on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-29-20-13-07.736.html">
+              <td>20:13:07 29 янв.</td>
+              <td>20:13:07 29 янв.</td>
+              <td>20:13:07 29 янв.</td>
+              <td>203 ms</td>
+              <td>0</td>
+              <td>203 ms</td>
+              <td>203 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>1</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-29-20-13-07.098.html">
+              <td>20:13:07 29 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>20:13:07 29 янв.</td>
+              <td>43 ms</td>
+              <td>2 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+              <td>0</td>
+              <td>1</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-29-19-21-39.037.html">
+              <td>19:21:38 29 янв.</td>
+              <td>19:21:38 29 янв.</td>
+              <td>19:21:39 29 янв.</td>
+              <td>52 ms</td>
+              <td>0</td>
+              <td>52 ms</td>
+              <td>52 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>1</td>
+              <td>2</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-29-19-21-38.976.html">
+              <td>19:21:38 29 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>19:21:38 29 янв.</td>
+              <td>836 ms</td>
+              <td>&lt; 1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>10709</td>
+              <td>0</td>
+              <td>1</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>2</td>
+              <td>full</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-29-19-20-34.964.html">
+              <td>19:20:34 29 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>19:20:34 29 янв.</td>
+              <td>675 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>10709</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>full on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-17-38-55.410.html">
+              <td>17:38:51 28 янв.</td>
+              <td>17:38:51 28 янв.</td>
+              <td>17:38:55 28 янв.</td>
+              <td>3 s 546 ms</td>
+              <td>0</td>
+              <td>3 s 546 ms</td>
+              <td>3 s 546 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>15</td>
+              <td>554<br>(incl. 554 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-28-17-38-51.435.html">
+              <td>17:38:51 28 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>17:38:51 28 янв.</td>
+              <td>225 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>1</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-17-29-53.490.html">
+              <td>17:29:53 28 янв.</td>
+              <td>17:29:53 28 янв.</td>
+              <td>17:29:53 28 янв.</td>
+              <td>37 ms</td>
+              <td>0</td>
+              <td>37 ms</td>
+              <td>37 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>2<br>(incl. 2 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-17-29-53.451.html">
+              <td>17:29:53 28 янв.</td>
+              <td>17:29:53 28 янв.</td>
+              <td>17:29:53 28 янв.</td>
+              <td>82 ms</td>
+              <td>0</td>
+              <td>82 ms</td>
+              <td>82 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>41<br>(incl. 41 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-17-09-19.556.html">
+              <td>17:09:19 28 янв.</td>
+              <td>17:09:19 28 янв.</td>
+              <td>17:09:19 28 янв.</td>
+              <td>&lt; 1 ms</td>
+              <td>0</td>
+              <td>&lt; 1 ms</td>
+              <td>&lt; 1 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>0</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-17-09-19.542.html">
+              <td>17:09:19 28 янв.</td>
+              <td>17:09:19 28 янв.</td>
+              <td>17:09:19 28 янв.</td>
+              <td>228 ms</td>
+              <td>0</td>
+              <td>228 ms</td>
+              <td>228 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>2</td>
+              <td>190<br>(incl. 190 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-16-55-57.549.html">
+              <td>16:55:57 28 янв.</td>
+              <td>16:55:57 28 янв.</td>
+              <td>16:55:57 28 янв.</td>
+              <td>&lt; 1 ms</td>
+              <td>0</td>
+              <td>&lt; 1 ms</td>
+              <td>&lt; 1 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>0</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-16-55-57.532.html">
+              <td>16:55:55 28 янв.</td>
+              <td>16:55:55 28 янв.</td>
+              <td>16:55:57 28 янв.</td>
+              <td>2 s 304 ms</td>
+              <td>0</td>
+              <td>2 s 304 ms</td>
+              <td>2 s 304 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>93</td>
+              <td>919<br>(incl. 919 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-16-55-39.820.html">
+              <td>16:55:39 28 янв.</td>
+              <td>16:55:39 28 янв.</td>
+              <td>16:55:39 28 янв.</td>
+              <td>163 ms</td>
+              <td>0</td>
+              <td>163 ms</td>
+              <td>163 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>5</td>
+              <td>273<br>(incl. 194 with nothing to write)</td>
+              <td>1</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-28-16-55-39.614.html">
+              <td>16:55:37 28 янв.</td>
+              <td>16:55:37 28 янв.</td>
+              <td>16:55:39 28 янв.</td>
+              <td>2 s 289 ms</td>
+              <td>0</td>
+              <td>2 s 289 ms</td>
+              <td>2 s 289 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>45</td>
+              <td>618<br>(incl. 618 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-28-16-55-39.674.html">
+              <td>16:55:37 28 янв.</td>
+              <td>16:55:39 28 янв.</td>
+              <td>16:55:39 28 янв.</td>
+              <td>2 s 458 ms</td>
+              <td>&lt; 1 ms</td>
+              <td>297 ms</td>
+              <td>297 ms</td>
+              <td>9744</td>
+              <td>0</td>
+              <td>273</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>1</td>
+              <td>partial</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-28-16-55-31.853.html">
+              <td>16:55:31 28 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>16:55:31 28 янв.</td>
+              <td>24 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-27-13-43-25.177.html">
+              <td>13:43:25 27 янв.</td>
+              <td>13:43:25 27 янв.</td>
+              <td>13:43:25 27 янв.</td>
+              <td>12 ms</td>
+              <td>0</td>
+              <td>12 ms</td>
+              <td>12 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>0</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-27-13-41-00.599.html">
+              <td>13:41:00 27 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>13:41:00 27 янв.</td>
+              <td>26 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-27-13-39-37.179.html">
+              <td>13:39:36 27 янв.</td>
+              <td>13:39:36 27 янв.</td>
+              <td>13:39:37 27 янв.</td>
+              <td>1 s 53 ms</td>
+              <td>0</td>
+              <td>1 s 53 ms</td>
+              <td>1 s 53 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>955<br>(incl. 955 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-27-13-39-35.168.html">
+              <td>13:39:35 27 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>13:39:35 27 янв.</td>
+              <td>18 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-27-13-38-38.417.html">
+              <td>13:38:38 27 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>13:38:38 27 янв.</td>
+              <td>2 ms</td>
+              <td>&lt; 1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>1</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-27-13-12-04.582.html">
+              <td>13:12:04 27 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>13:12:04 27 янв.</td>
+              <td>17 ms</td>
+              <td>1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>5</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>partial on project open</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-27-13-12-04.331.html">
+              <td>13:12:03 27 янв.</td>
+              <td>13:12:03 27 янв.</td>
+              <td>13:12:04 27 янв.</td>
+              <td>858 ms</td>
+              <td>0</td>
+              <td>858 ms</td>
+              <td>858 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>7</td>
+              <td>63<br>(incl. 63 changed in VFS)<br>(incl. 2 with nothing to write)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-27-13-04-48.843.html">
+              <td>13:04:48 27 янв.</td>
+              <td>13:04:48 27 янв.</td>
+              <td>13:04:48 27 янв.</td>
+              <td>&lt; 1 ms</td>
+              <td>0</td>
+              <td>&lt; 1 ms</td>
+              <td>&lt; 1 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>0</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-27-13-04-48.835.html">
+              <td>13:04:48 27 янв.</td>
+              <td>13:04:48 27 янв.</td>
+              <td>13:04:48 27 янв.</td>
+              <td>238 ms</td>
+              <td>0</td>
+              <td>238 ms</td>
+              <td>238 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>7</td>
+              <td>160<br>(incl. 160 changed in VFS)</td>
+              <td>None</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-27-13-04-48.821.html">
+              <td>13:04:48 27 янв.</td>
+              <td class="not-applicable-data">Didn't start</td>
+              <td>13:04:48 27 янв.</td>
+              <td>676 ms</td>
+              <td>&lt; 1 ms</td>
+              <td>0</td>
+              <td>0</td>
+              <td>8873</td>
+              <td>0</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>1</td>
+              <td>partial</td>
+            </tr>
+            <tr class="linkable-table-row" href="diagnostic-2026-01-27-13-04-47.875.html">
+              <td>13:04:45 27 янв.</td>
+              <td>13:04:45 27 янв.</td>
+              <td>13:04:47 27 янв.</td>
+              <td>2 s 534 ms</td>
+              <td>0</td>
+              <td>2 s 534 ms</td>
+              <td>2 s 534 ms</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>174</td>
+              <td>960<br>(incl. 18 changed in VFS)</td>
+              <td>0</td>
+              <td class="not-applicable-data">N/A</td>
+            </tr>
+            <tr class="linkable-table-row scanning-table-row" href="diagnostic-2026-01-27-13-04-45.332.html">
+              <td>13:04:44 27 янв.</td>
+              <td>13:04:45 27 янв.</td>
+              <td>13:04:45 27 янв.</td>
+              <td>501 ms</td>
+              <td>1 ms</td>
+              <td>301 ms</td>
+              <td>301 ms</td>
+              <td>1167</td>
+              <td>0</td>
+              <td>942</td>
+              <td class="not-applicable-data">N/A</td>
+              <td class="not-applicable-data">N/A</td>
+              <td>0</td>
+              <td>full on project open</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div>
+        <table class="table-with-margin activity-table">
+          <thead>
+            <tr>
+              <th colspan="9">Shared indexes</th>
+            </tr>
+            <tr>
+              <th>Time</th>
+              <th>Kind</th>
+              <th>Name</th>
+              <th>Size</th>
+              <th>Download time</th>
+              <th>Download speed</th>
+              <th>Status</th>
+              <th>ID</th>
+              <th>Generation time</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div>
+        <table class="table-with-margin activity-table">
+          <thead>
+            <tr>
+              <th colspan="5">Scanning to push properties of changed files</th>
+            </tr>
+            <tr>
+              <th>Time</th>
+              <th>Reason</th>
+              <th>Full duration</th>
+              <th>Is cancelled</th>
+              <th>Number</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>02:54:10 31 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>3 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>02:53:27 31 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>2 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>02:48:17 31 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>2 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>02:47:47 31 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>7 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>22:34:42 30 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>3 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>21:04:55 30 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>&lt; 1 ms</td>
+              <td>fully finished</td>
+              <td>2</td>
+            </tr>
+            <tr>
+              <td>20:49:25 30 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>4 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>19:33:19 29 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>6 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>17:30:58 28 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>4 ms</td>
+              <td>fully finished</td>
+              <td>10</td>
+            </tr>
+            <tr>
+              <td>17:06:00 28 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>2 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>16:55:57 28 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>&lt; 1 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>16:55:55 28 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>10 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>13:43:25 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>4 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>13:41:17 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>3 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>13:37:12 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>1 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>13:23:22 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>1 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>13:18:22 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>2 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>13:12:04 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>2 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>13:11:28 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>&lt; 1 ms</td>
+              <td>fully finished</td>
+              <td>3</td>
+            </tr>
+            <tr>
+              <td>13:05:55 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>1 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+            <tr>
+              <td>13:04:48 27 янв.</td>
+              <td>Push on VFS changes</td>
+              <td>8 ms</td>
+              <td>fully finished</td>
+              <td>1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </body>
+</html>
