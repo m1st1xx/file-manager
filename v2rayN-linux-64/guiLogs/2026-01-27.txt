@@ -1,7 +1,0 @@
-2026-01-27 12:52:58.9929-INFO v2rayN start up | v2rayN - V7.16.6 - X64 | /home/m1st/v2rayN-linux-64/ | /home/m1st/v2rayN-linux-64/v2rayN | Unix 6.18.6.1
-2026-01-27 12:53:00.1423-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/binConfigs/proxy_set_linux_sh.sh
-2026-01-27 12:53:00.3417-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/AmazTool
-2026-01-27 12:53:00.3419-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/xray/xray
-2026-01-27 12:53:00.3419-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/mihomo/mihomo
-2026-01-27 12:53:00.3419-INFO Successfully set the file execution permission, /home/m1st/v2rayN-linux-64/bin/sing_box/sing-box
-2026-01-27 12:53:00.3439-INFO Setup Scheduled Tasks
