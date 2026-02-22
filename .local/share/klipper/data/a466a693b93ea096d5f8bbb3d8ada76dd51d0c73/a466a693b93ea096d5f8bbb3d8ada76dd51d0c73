@@ -1,1 +1,0 @@
-scp -r . user@your-server-ip:/home/user/school-file-manager

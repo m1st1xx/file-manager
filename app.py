@@ -3,13 +3,14 @@ import sqlite3
 import os
 
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 from pathlib import Path
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here-change-in-production'  # для сессий
 
 UPLOAD_BASE = "uploads"
-SUBJECTS = ["ПОКС", "ОППиФКС", "ЭОСИ", "АСОС", "ОАКС","ИКГ","МПС"]
+SUBJECTS = ["ПОКС","ОППиФКС","ЭОСИ","АСОС","ОАКС","ИКГ","МПС"]
 
 def init_db():
     conn=sqlite3.connect("users.db")
@@ -114,6 +115,7 @@ def upload_select():
     return render_template('select_subject.html', mode='upload')
 
 
+
 @app.route('/<mode>/<subject>', methods=['GET','POST'])
 def subject_files(subject,mode):
     if mode not in ['download','upload']:
@@ -142,6 +144,26 @@ def subject_files(subject,mode):
         files = [f for f in os.listdir(subject_path) if os.path.isfile(os.path.join(subject_path,f))]
     return render_template('subject_files.html', mode=mode, subject=subject, files=files)
 
+@app.route('/delete_file<subject>/<filename>', methods=['POST'])
+def delete_file(subject,filename):
+    if subject not in SUBJECTS:
+        return "INCORRECT SUBJECT", 400
+    if 'user' not in session:
+        return redirect(url_for('index'))
+    safe_filename= secure_filename(filename)
+    user_folder= get_user_folder()
+    if not user_folder:
+        return redirect(url_for('index'))
+    file_path= os.path.join(user_folder,subject,safe_filename)
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+        flash(f"Файл '{safe_filename}' удалён.","success")
+    else:
+        flash("Файл не найден.","error")
+    return redirect(url_for('subject_files', mode='upload',subject=subject))
+
+
+
 
 @app.route('/download_file/<subject>/<filename>')
 def download_file(subject,filename):
@@ -152,6 +174,33 @@ def download_file(subject,filename):
         return redirect(url_for('index'))
     subject_path=os.path.join(user_folder,subject)
     return send_from_directory(subject_path,filename,as_attachment=True)
+
+@app.route('/reset_password',methods=['GET','POST'])
+def reset_password():
+    if request.method=='POST':
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        group_number = request.form['group_number']
+        new_password = request.form['new_password']
+        conn= sqlite3.connect('users.db')
+        c=conn.cursor()
+        c.execute('''SELECT id FROM users 
+        WHERE first_name=? AND last_name = ? AND group_number = ? '''
+                  ,(first_name,last_name,group_number))
+        user=c.fetchone()
+        if user:
+            password_hash=generate_password_hash(new_password)
+            c.execute(''' UPDATE users SET password_hash = ?
+            WHERE id = ?''',(password_hash,user[0]))
+            conn.commit()
+            flash("Пароль успешно изменён!","success")
+        else:
+            flash("Пользователь не найден.","error")
+        conn.close()
+        return redirect(url_for('index'))
+    return render_template('reset_password.html')
+
+
 
 
 @app.context_processor
