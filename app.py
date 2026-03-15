@@ -4,6 +4,8 @@ import os
 
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
+from urllib.parse import unquote
+from urllib.parse import quote
 from pathlib import Path
 
 app = Flask(__name__)
@@ -150,14 +152,14 @@ def delete_file(subject,filename):
         return "INCORRECT SUBJECT", 400
     if 'user' not in session:
         return redirect(url_for('index'))
-    safe_filename= secure_filename(filename)
+    decoded_filename = unquote(filename)
     user_folder= get_user_folder()
     if not user_folder:
         return redirect(url_for('index'))
-    file_path= os.path.join(user_folder,subject,safe_filename)
+    file_path= os.path.join(user_folder,subject,decoded_filename)
     if os.path.isfile(file_path):
         os.remove(file_path)
-        flash(f"Файл '{safe_filename}' удалён.","success")
+        flash(f"Файл '{decoded_filename}' удалён.","success")
     else:
         flash("Файл не найден.","error")
     return redirect(url_for('subject_files', mode='upload',subject=subject))
@@ -210,7 +212,7 @@ def inject_subjects():
 
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['POST'])
 def logout():
     session.clear()
     return redirect(url_for('index'))

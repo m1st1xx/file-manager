@@ -8,14 +8,22 @@
 </head>
 <body>
   <div class="main-container">
+    <!-- Информация о пользователе и кнопка выхода -->
+    <div class="user-info">
+      <h3>Привет, {{ session.first_name }} {{ session.last_name }}!</h3>
+      <form action="{{ url_for('logout') }}" method="POST" style="display:inline;">
+        <button type="submit">Выйти</button>
+      </form>
+    </div>
+
     <div class="half left">
-  <h2>Скачать файлы</h2>
-  <button onclick="location.href='/download'">Выбрать предмет</button>
-</div>
-<div class="half right">
-  <h2>Загрузить файлы</h2>
-  <button onclick="location.href='/upload'">Выбрать предмет</button>
-</div>
+      <h2>Скачать файлы</h2>
+      <button onclick="location.href='/download'">Выбрать предмет</button>
+    </div>
+    <div class="half right">
+      <h2>Загрузить файлы</h2>
+      <button onclick="location.href='/upload'">Выбрать предмет</button>
+    </div>
   </div>
 
 
