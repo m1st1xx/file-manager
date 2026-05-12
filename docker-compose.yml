@@ -1,0 +1,19 @@
+services:
+  file-manager:
+    build: .
+    ports:
+      - "5000:5000"
+    restart: always
+    volumes:
+      - ./uploads:/app/uploads
+      - ./users.db:/app/users.db
+    environment:
+      - FLASK_APP=app.py
+      - FLASK_ENV=production
+  nginx:
+    image:nginx:latest
+    build:./nginx
+    ports:
+      - "5000:5000"
+      - "80:80"
+    restart:always
