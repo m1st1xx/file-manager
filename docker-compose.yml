@@ -11,7 +11,7 @@ services:
       - FLASK_APP=app.py
       - FLASK_ENV=production
   nginx:
-    build:./nginx
+    build: ./nginx
     volumes:
       - certbot-etc:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
@@ -21,7 +21,7 @@ services:
     ports:
       - "80:80"
       - "443:443"
-    restart:always
+    restart: always
   certbot:
     image: certbot/certbot
     container_name: certbot
