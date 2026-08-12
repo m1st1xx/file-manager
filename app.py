@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 load_dotenv()
 TOKEN=getenv("TOKEN")
-app.secret_key = TOKEN
+app.secret_key = "dsfbhvdfivbsdfivdfbvdfiovbdfvoidfbvdfi"
 
 UPLOAD_BASE = "uploads"
 DEFAULT_SUBJECTS = ["ПОКС", "ОППиФКС", "ЭОСИ", "АСОС", "ОАКС", "ИКГ", "МПС"]
@@ -20,6 +20,13 @@ DEFAULT_SUBJECTS = ["ПОКС", "ОППиФКС", "ЭОСИ", "АСОС", "ОА�
 
 def get_db():
     conn = sqlite3.connect("users.db")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+# создание новой бд только логин пароль путь
+
+def get_new_db():
+    conn = sqlite3.connect("new_users.db")
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -34,6 +41,33 @@ def init_db():
             first_name TEXT NOT NULL,
             last_name TEXT NOT NULL,
             group_number TEXT NOT NULL,
+            password_hash TEXT NOT NULL,
+            folder_path TEXT NOT NULL
+        )"""
+    )
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS subjects (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            name TEXT NOT NULL,
+            UNIQUE(user_id, name),
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )"""
+    )
+
+    conn.commit()
+
+# создание таблиц для новой бд
+
+def init_new_db():
+    conn = get_new_db()
+    c = conn.cursor()
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS users (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            username TEXT NOT NULL,
             password_hash TEXT NOT NULL,
             folder_path TEXT NOT NULL
         )"""
@@ -135,30 +169,31 @@ def create_subject_folder(subject):
 def index():
     return render_template("index.html")
 
+# новая форма регистрации
 
 @app.route("/register", methods=["POST"])
 def register():
-    first_name = request.form["first_name"].strip()
-    last_name = request.form["last_name"].strip()
-    group_number = request.form["group_number"].strip()
-    password_hash = generate_password_hash(request.form["password"])
+    username = request.form["username"].strip()
+    password = request.form["password"]
+    password_confirm = request.form["password_confirm"]
+    if password != password_confirm:
+        flash("Пароли не совпадают.", "error")
+        return redirect(url_for("index"))
+    password_hash = generate_password_hash(password)
 
     folder_path = os.path.join(
         UPLOAD_BASE,
-        f"{first_name}_{last_name}"
+        f"{username}"
     )
 
     try:
-        conn = get_db()
-
+        conn = get_new_db()
         conn.execute(
             """INSERT INTO users
-               (first_name, last_name, group_number, password_hash, folder_path)
-               VALUES (?, ?, ?, ?, ?)""",
+               (username, password_hash, folder_path)
+               VALUES (?, ?, ?)""",
             (
-                first_name,
-                last_name,
-                group_number,
+                username,
                 password_hash,
                 folder_path
             )
@@ -182,9 +217,40 @@ def register():
 
     return redirect(url_for("index"))
 
+#новые поля для логина
 
 @app.route("/login", methods=["POST"])
 def login():
+    username = request.form["username"].strip()
+    password = request.form["password"]
+
+    conn = get_new_db()
+
+    user = conn.execute(
+        """SELECT * FROM users
+           WHERE username = ? """,
+        (username, )
+    ).fetchone()
+
+    conn.close()
+
+    if user and check_password_hash(user["password_hash"], password):
+        session.clear()
+        session["user_id"] = user["id"]
+        session["user"] = f"{user['username']}"
+
+        if not get_user_subjects():
+            return redirect(url_for("edit_subjects"))
+
+        return redirect(url_for("main"))
+
+    flash("Неверные данные", "error")
+    return redirect(url_for("index"))
+
+# добавлена функция входа старым способом
+
+@app.route("/old_login", methods=["POST"])
+def old_login():
     first_name = request.form["first_name"].strip()
     last_name = request.form["last_name"].strip()
     group_number = request.form["group_number"].strip()
@@ -210,10 +276,56 @@ def login():
         if not get_user_subjects():
             return redirect(url_for("edit_subjects"))
 
-        return redirect(url_for("main"))
+        return redirect(url_for("set_username"))
 
     flash("Неверные данные", "error")
     return redirect(url_for("index"))
+
+# новая страница сюда редиректит пользователя если он вошел старым способом
+
+@app.route("/set_username", methods=["GET","POST"])
+def set_username():
+    if "user_id" not in session:
+        flash("Сначала войдите!", "error")
+        return redirect(url_for("index"))
+    if request.method == "GET":
+        return render_template("set_username.html")
+
+
+    username=request.form["username"].strip()
+    conn = get_db()
+    password_row = conn.execute("""SELECT password_hash FROM users
+           WHERE first_name = ? AND last_name = ? """,
+        (session['first_name'], session['last_name'])).fetchone()
+
+
+    folder_row= conn.execute("""SELECT folder_path FROM users
+           WHERE first_name = ? AND last_name = ? """,
+        (session['first_name'], session['last_name'])).fetchone()
+    conn.close()
+
+    password_hash=password_row["password_hash"]
+    folder_path= folder_row["folder_path"]
+
+    conn = get_new_db()
+    conn.execute(
+        """INSERT INTO users
+           (username, password_hash, folder_path)
+           VALUES (?, ?, ?)""",
+        (
+            username,
+            password_hash,
+            folder_path
+        )
+    )
+    conn.commit()
+    conn.close()
+    session["user"]= username
+    flash("Имя пользователя успешно обновлено!", "success")
+    return redirect(url_for("main"))
+
+
+
 
 
 @app.route("/main")
@@ -558,4 +670,5 @@ def logout():
 
 if __name__ == "__main__":
     init_db()
+    init_new_db()
     app.run(debug=False,host="0.0.0.0",port=5000)
