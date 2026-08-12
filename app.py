@@ -254,7 +254,7 @@ def old_login():
     first_name = request.form["first_name"].strip()
     last_name = request.form["last_name"].strip()
     group_number = request.form["group_number"].strip()
-    password = request.form["password"]
+    password = request.form["old_password"]
 
     conn = get_db()
 
