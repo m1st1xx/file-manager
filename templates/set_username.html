@@ -3,4 +3,4 @@
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Настройка имени пользователя</title><link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"></head>
 <body>
 <main class="username-page"><section class="username-card"><div class="brand-mark">UF</div><h1>Теперь вход стал легче</h1><p class="username-description">Теперь вход стал легче — введите имя пользователя и входите через него, а пароль останется прежним.</p><form class="form" method="POST" action="{{ url_for('set_username') }}"><input type="text" name="username" placeholder="Имя пользователя" minlength="3" maxlength="50" autocomplete="username" required><button type="submit">Сохранить имя пользователя</button></form>{% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}<div class="alerts">{% for category,message in messages %}<div class="alert {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}</section></main>
-</body></html>.
+</body></html>
