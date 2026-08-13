@@ -217,6 +217,3 @@ __marimo__/
 # Streamlit
 .streamlit/secrets.toml
 .idea
-venv
-site-packages
-python3.11
