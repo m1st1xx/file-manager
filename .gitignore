@@ -216,6 +216,7 @@ __marimo__/
 .gitconfig
 # Streamlit
 .streamlit/secrets.toml
+.idea
 venv
 site-packages
 python3.11
