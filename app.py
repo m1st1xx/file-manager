@@ -377,7 +377,7 @@ def edit_subjects():
             flash("Введите корректное название предмета.", "error")
             return redirect(url_for("edit_subjects"))
 
-        conn = get_db()
+        conn = get_new_db()
 
         try:
             conn.execute(
@@ -435,7 +435,7 @@ def delete_subject():
         )
         return redirect(url_for("edit_subjects"))
 
-    conn = get_db()
+    conn = get_new_db()
 
     conn.execute(
         "DELETE FROM subjects WHERE user_id = ? AND name = ?",
