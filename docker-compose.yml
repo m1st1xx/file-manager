@@ -1,6 +1,7 @@
 services:
   file-manager:
     build: .
+    env_file: .
     ports:
       - "5000:5000"
     restart: always

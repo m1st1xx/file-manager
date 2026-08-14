@@ -236,7 +236,7 @@ a { color: inherit; text-decoration: none; }
   margin-right: auto;
   font-size: 15px;
   font-weight: 500;
-  color: var(--muted);
+  color: var(--text);
 }
 
 .user-info h3::first-letter { color: var(--text); }
@@ -418,7 +418,7 @@ a { color: inherit; text-decoration: none; }
 }
 .subject-form form button { background: var(--accent); color: white; }
 .cancel-button { margin-top: 8px; background: var(--panel-2); color: var(--muted); border: 1px solid var(--border); }
-.hidden { display: none; }
+.hidden { display: none !important; }
 .back-link { display: inline-block; margin-top: 18px; }
 .subjects-hint { color: var(--muted); margin-top: 20px; line-height: 1.6; }
 
@@ -495,3 +495,50 @@ a { color: inherit; text-decoration: none; }
 }
 
 .hidden-field{display:none!important}.secondary-auth-btn{width:100%;margin-top:10px;padding:.8rem 1rem;border:1px solid #334155;border-radius:8px;background:transparent;color:#cbd5e1;cursor:pointer;transition:.2s}.secondary-auth-btn:hover{background:#1e293b;border-color:#475569}.username-page{min-height:100vh;width:100%;display:flex;align-items:center;justify-content:center;padding:24px}.username-card{width:100%;max-width:560px;padding:48px;background:#0f172a;border:1px solid #263449;border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.35)}.username-card .brand-mark{margin-bottom:22px}.username-card h1{margin-bottom:14px;color:#f8fafc}.username-description{margin-bottom:28px;color:#94a3b8;line-height:1.7}.username-card .form{display:flex;flex-direction:column;gap:12px}.username-card .form input{margin:0}.username-card .form button{margin-top:4px}.auth-card .form input.hidden-field{display:none}.auth-card .form input{transition:border-color .2s,box-shadow .2s}.auth-card .form input:focus{border-color:#64748b;box-shadow:0 0 0 3px rgba(100,116,139,.12)}
+
+/* ---------- Password Toggle Styles ---------- */
+.password-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 11px;
+}
+
+.password-wrapper input {
+  margin-bottom: 0 !important;
+  padding-right: 42px;
+}
+
+.password-wrapper.hidden-field {
+  display: none !important;
+}
+
+.form button.toggle-password {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: auto;
+  height: auto;
+  margin-top: 0;
+  padding: 6px;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color .2s ease;
+  z-index: 2;
+}
+
+.form button.toggle-password:hover {
+  background: transparent;
+  color: var(--text);
+  transform: translateY(-50%);
+}
+
+.toggle-password svg {
+  pointer-events: none;
+  display: block;
+}

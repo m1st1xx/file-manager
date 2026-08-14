@@ -12,7 +12,7 @@ app = Flask(__name__)
 
 load_dotenv()
 TOKEN=getenv("TOKEN")
-app.secret_key = "dsfbhvdfivbsdfivdfbvdfiovbdfvoidfbvdfi"
+app.secret_key = TOKEN
 
 UPLOAD_BASE = "uploads"
 DEFAULT_SUBJECTS = ["ПОКС", "ОППиФКС", "ЭОСИ", "АСОС", "ОАКС", "ИКГ", "МПС"]
@@ -85,7 +85,7 @@ def init_new_db():
 
     conn.commit()
 
-    # обратная совместимость для старых пользователей, люблю вас)
+    # обратная совместимость для старых пользователей, люблю вас
     users = c.execute("SELECT id, folder_path FROM users").fetchall()
 
     for user in users:
@@ -613,23 +613,19 @@ def download_file(subject, filename):
 @app.route("/reset_password", methods=["GET", "POST"])
 def reset_password():
     if request.method == "POST":
-        first_name = request.form["first_name"]
-        last_name = request.form["last_name"]
-        group_number = request.form["group_number"]
+        username = request.form["username"]
         new_password = request.form["new_password"]
 
-        conn = get_db()
+        conn = get_new_db()
 
         user = conn.execute(
             """SELECT id FROM users
-               WHERE first_name = ? AND last_name = ? AND group_number = ?""",
-            (first_name, last_name, group_number)
+               WHERE username = ? """,
+            (username, )
         ).fetchone()
 
         if user:
-            password_hash = generate_password_hash(
-                new_password
-            )
+            password_hash = generate_password_hash(new_password)
 
             conn.execute(
                 "UPDATE users SET password_hash = ? WHERE id = ?",
