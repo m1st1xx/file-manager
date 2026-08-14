@@ -58,6 +58,28 @@ def init_db():
 
     conn.commit()
 
+    users = c.execute("SELECT id, folder_path FROM users").fetchall()
+
+    for user in users:
+        count = c.execute(
+            "SELECT COUNT(*) FROM subjects WHERE user_id = ?",
+            (user["id"],)
+        ).fetchone()[0]
+
+        if count == 0:
+            for subject in DEFAULT_SUBJECTS:
+                c.execute(
+                    "INSERT OR IGNORE INTO subjects (user_id, name) VALUES (?, ?)",
+                    (user["id"], subject)
+                )
+                Path(os.path.join(user["folder_path"], subject)).mkdir(
+                    parents=True,
+                    exist_ok=True
+                )
+
+    conn.commit()
+    conn.close()
+
 # создание таблиц для новой бд
 
 def init_new_db():
@@ -85,28 +107,6 @@ def init_new_db():
 
     conn.commit()
 
-    # обратная совместимость для старых пользователей, люблю вас
-    users = c.execute("SELECT id, folder_path FROM users").fetchall()
-
-    for user in users:
-        count = c.execute(
-            "SELECT COUNT(*) FROM subjects WHERE user_id = ?",
-            (user["id"],)
-        ).fetchone()[0]
-
-        if count == 0:
-            for subject in DEFAULT_SUBJECTS:
-                c.execute(
-                    "INSERT OR IGNORE INTO subjects (user_id, name) VALUES (?, ?)",
-                    (user["id"], subject)
-                )
-                Path(os.path.join(user["folder_path"], subject)).mkdir(
-                    parents=True,
-                    exist_ok=True
-                )
-
-    conn.commit()
-    conn.close()
 
 
 def get_current_user():
