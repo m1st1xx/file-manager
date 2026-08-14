@@ -1,26 +1,159 @@
 <!DOCTYPE html>
 <html lang="ru">
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Учебные файлы — Вход</title><link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"></head>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Учебные файлы — Вход</title>
+  <link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}">
+  <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
 <body>
 <main class="auth-page">
-<section class="auth-brand"><div class="brand-mark">UF</div><h1>Учебные<br><span>файлы.</span></h1><p>Здесь вы можете сохранять и скачивать свои учебные файлы: лекции, лабораторные работы, отчеты, код и другие материалы, которые хранятся в файлах с небольшим размером.</p></section>
-<section class="auth-card">
-<h2 id="auth-title">Добро пожаловать</h2><p class="subtitle" id="auth-subtitle">Войдите в хранилище учебных материалов</p>
-<div class="tabs"><button id="btn-login" class="tab active" type="button">Войти</button><button id="btn-register" class="tab" type="button">Создать аккаунт</button></div>
-<form id="auth-form" class="form" method="POST" action="{{ url_for('login') }}">
-<div id="new-auth-fields"><input type="text" name="username" id="username" placeholder="Имя пользователя" autocomplete="username" required><input type="password" name="password" id="password" placeholder="Пароль" autocomplete="current-password" required><input type="password" name="password_confirm" id="password-confirm" placeholder="Подтверждение пароля" autocomplete="new-password" class="hidden-field"></div>
-<div id="old-auth-fields" class="hidden-field"><input type="text" name="first_name" id="first-name" placeholder="Имя"><input type="text" name="last_name" id="last-name" placeholder="Фамилия"><input type="text" name="group_number" id="group-number" placeholder="Номер группы"><input type="password" name="old_password" id="old-password" placeholder="Пароль"></div>
-<button type="submit" id="submit-btn">Войти</button><p id="forgot-link"><a href="{{ url_for('reset_password') }}">Забыли пароль?</a></p>
-</form>
-<button id="old-login-btn" class="secondary-auth-btn" type="button">Войти старым способом</button>
-{% with messages=get_flashed_messages(with_categories=true) %}{% if messages %}<div class="alerts">{% for category,message in messages %}<div class="alert {{ category }}">{{ message }}</div>{% endfor %}</div>{% endif %}{% endwith %}
-</section></main>
+  <section class="auth-brand">
+    <div class="brand-mark">UF</div>
+    <h1>Учебные<br><span>файлы.</span></h1>
+    <p>Здесь вы можете сохранять и скачивать свои учебные файлы: лекции, лабораторные работы, отчеты, код и другие материалы, которые хранятся в файлах с небольшим размером.</p>
+  </section>
+
+  <section class="auth-card">
+    <h2 id="auth-title">Добро пожаловать</h2>
+    <p class="subtitle" id="auth-subtitle">Войдите в хранилище учебных материалов</p>
+
+    <div class="tabs">
+      <button id="btn-login" class="tab active" type="button">Войти</button>
+      <button id="btn-register" class="tab" type="button">Создать аккаунт</button>
+    </div>
+
+    <form id="auth-form" class="form" method="POST" action="{{ url_for('login') }}">
+      <div id="new-auth-fields">
+        <input type="text" name="username" id="username" placeholder="Имя пользователя" autocomplete="username" required>
+
+        <div class="password-wrapper">
+          <input type="password" name="password" id="password" placeholder="Пароль" autocomplete="current-password" required>
+          <button type="button" class="toggle-password" aria-label="Показать пароль" title="Показать/скрыть пароль">
+            <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="eye-closed hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+
+        <div class="password-wrapper hidden-field" id="confirm-wrapper">
+          <input type="password" name="password_confirm" id="password-confirm" placeholder="Подтверждение пароля" autocomplete="new-password">
+          <button type="button" class="toggle-password" aria-label="Показать пароль" title="Показать/скрыть пароль">
+            <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="eye-closed hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="old-auth-fields" class="hidden-field">
+        <input type="text" name="first_name" id="first-name" placeholder="Имя">
+        <input type="text" name="last_name" id="last-name" placeholder="Фамилия">
+        <input type="text" name="group_number" id="group-number" placeholder="Номер группы">
+
+        <div class="password-wrapper">
+          <input type="password" name="old_password" id="old-password" placeholder="Пароль">
+          <button type="button" class="toggle-password" aria-label="Показать пароль" title="Показать/скрыть пароль">
+            <svg class="eye-open" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            <svg class="eye-closed hidden" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <button type="submit" id="submit-btn">Войти</button>
+      <p id="forgot-link"><a href="{{ url_for('reset_password') }}">Забыли пароль?</a></p>
+    </form>
+
+    <button id="old-login-btn" class="secondary-auth-btn" type="button">Войти старым способом</button>
+
+    {% with messages=get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="alerts">
+          {% for category,message in messages %}
+            <div class="alert {{ category }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+  </section>
+</main>
+
 <script>
-const form=document.getElementById('auth-form'),loginBtn=document.getElementById('btn-login'),registerBtn=document.getElementById('btn-register'),oldBtn=document.getElementById('old-login-btn'),submitBtn=document.getElementById('submit-btn'),newFields=document.getElementById('new-auth-fields'),oldFields=document.getElementById('old-auth-fields'),confirm=document.getElementById('password-confirm'),title=document.getElementById('auth-title'),subtitle=document.getElementById('auth-subtitle'),forgot=document.getElementById('forgot-link');
+const form=document.getElementById('auth-form'),
+      loginBtn=document.getElementById('btn-login'),
+      registerBtn=document.getElementById('btn-register'),
+      oldBtn=document.getElementById('old-login-btn'),
+      submitBtn=document.getElementById('submit-btn'),
+      newFields=document.getElementById('new-auth-fields'),
+      oldFields=document.getElementById('old-auth-fields'),
+      confirmWrapper=document.getElementById('confirm-wrapper'),
+      confirm=document.getElementById('password-confirm'),
+      title=document.getElementById('auth-title'),
+      subtitle=document.getElementById('auth-subtitle'),
+      forgot=document.getElementById('forgot-link');
+
 function active(btn){document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));btn.classList.add('active')}
 function setRequired(selector,value){document.querySelectorAll(selector).forEach(x=>x.required=value)}
-function newMode(register=false){active(register?registerBtn:loginBtn);form.action=register?'{{ url_for('register') }}':'{{ url_for('login') }}';submitBtn.textContent=register?'Создать аккаунт':'Войти';title.textContent=register?'Создайте аккаунт':'Добро пожаловать';subtitle.textContent=register?'Введите имя пользователя и придумайте пароль':'Войдите в хранилище учебных материалов';newFields.classList.remove('hidden-field');oldFields.classList.add('hidden-field');confirm.classList.toggle('hidden-field',!register);setRequired('#new-auth-fields input',true);setRequired('#old-auth-fields input',false);forgot.style.display=register?'none':'';oldBtn.style.display='';document.getElementById('username').focus()}
-loginBtn.onclick=()=>newMode(false);registerBtn.onclick=()=>newMode(true);
-oldBtn.onclick=()=>{active(loginBtn);form.action='{{ url_for('old_login') }}';submitBtn.textContent='Войти';title.textContent='Старый способ входа';subtitle.textContent='Используйте имя, фамилию, группу и пароль';newFields.classList.add('hidden-field');oldFields.classList.remove('hidden-field');setRequired('#new-auth-fields input',false);setRequired('#old-auth-fields input',true);confirm.classList.add('hidden-field');forgot.style.display='';oldBtn.style.display='none';document.getElementById('first-name').focus()};
-form.addEventListener('submit',e=>{if(!confirm.classList.contains('hidden-field')&&document.getElementById('password').value!==confirm.value){e.preventDefault();confirm.setCustomValidity('Пароли не совпадают');confirm.reportValidity()}else confirm.setCustomValidity('')});
-</script></body></html>
+
+function newMode(register=false){
+  active(register?registerBtn:loginBtn);
+  form.action=register?'{{ url_for('register') }}':'{{ url_for('login') }}';
+  submitBtn.textContent=register?'Создать аккаунт':'Войти';
+  title.textContent=register?'Создайте аккаунт':'Добро пожаловать';
+  subtitle.textContent=register?'Введите имя пользователя и придумайте пароль':'Войдите в хранилище учебных материалов';
+  newFields.classList.remove('hidden-field');
+  oldFields.classList.add('hidden-field');
+  confirmWrapper.classList.toggle('hidden-field',!register);
+  setRequired('#new-auth-fields input:not(#password-confirm)',true);
+  confirm.required=register;
+  setRequired('#old-auth-fields input',false);
+  forgot.style.display=register?'none':'';
+  oldBtn.style.display='';
+  document.getElementById('username').focus();
+}
+
+loginBtn.onclick=()=>newMode(false);
+registerBtn.onclick=()=>newMode(true);
+
+oldBtn.onclick=()=>{
+  active(loginBtn);
+  form.action='{{ url_for('old_login') }}';
+  submitBtn.textContent='Войти';
+  title.textContent='Старый способ входа';
+  subtitle.textContent='Используйте имя, фамилию, группу и пароль';
+  newFields.classList.add('hidden-field');
+  oldFields.classList.remove('hidden-field');
+  setRequired('#new-auth-fields input',false);
+  setRequired('#old-auth-fields input',true);
+  confirmWrapper.classList.add('hidden-field');
+  forgot.style.display='';
+  oldBtn.style.display='none';
+  document.getElementById('first-name').focus();
+};
+
+form.addEventListener('submit',e=>{
+  if(!confirmWrapper.classList.contains('hidden-field')&&document.getElementById('password').value!==confirm.value){
+    e.preventDefault();
+    confirm.setCustomValidity('Пароли не совпадают');
+    confirm.reportValidity();
+  } else {
+    confirm.setCustomValidity('');
+  }
+});
+
+// Логика показа / скрытия пароля
+document.querySelectorAll('.toggle-password').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const input = btn.closest('.password-wrapper').querySelector('input');
+    const openIcon = btn.querySelector('.eye-open');
+    const closedIcon = btn.querySelector('.eye-closed');
+    const isPassword = input.type === 'password';
+
+    input.type = isPassword ? 'text' : 'password';
+    openIcon.classList.toggle('hidden', isPassword);
+    closedIcon.classList.toggle('hidden', !isPassword);
+    btn.setAttribute('aria-label', isPassword ? 'Скрыть пароль' : 'Показать пароль');
+  });
+});
+</script>
+</body>
+</html>
