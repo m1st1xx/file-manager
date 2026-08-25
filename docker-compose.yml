@@ -1,20 +1,23 @@
 services:
   file-manager:
     build: .
-    env_file: .
+    container_name: file-manager
+    env_file: .env
     ports:
       - "5000:5000"
     restart: always
     volumes:
       - /var/private/uploads:/app/uploads
       - /var/private/users.db:/app/users.db
+      - /var/private/new_users.db:/app/new_users.db
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=production
   nginx:
     build: ./nginx
+    container_name: nginx
     volumes:
-      - /var/private/ssl:/etc/letsencrypt
+      - /var/private/myfiles-kai.ru/ssl:/etc/letsencrypt
       - certbot-var:/var/lib/letsencrypt
       - webroot:/var/www/certbot
     depends_on:
@@ -23,16 +26,6 @@ services:
       - "80:80"
       - "443:443"
     restart: always
-  certbot:
-    image: certbot/certbot
-    container_name: certbot
-    volumes:
-      - /var/private/ssl:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-      - webroot:/var/www/certbot
-    command: certonly --webroot --webroot-path=/var/www/certbot --email your@email.com --agree-tos --no-eff-email -d your.domain.com
 volumes:
   certbot-var:
   webroot:
-
-
