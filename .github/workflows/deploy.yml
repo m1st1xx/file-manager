@@ -46,8 +46,8 @@ jobs:
 
             cd /home/ubuntu/myfiles-kai
 
-            git fetch origin main
-            git reset --hard origin/main
+            git fetch file-manager main
+            git reset --hard file-manager/main
 
             docker compose up -d --build --remove-orphans
 
