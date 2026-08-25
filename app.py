@@ -58,6 +58,28 @@ def init_db():
 
     conn.commit()
 
+    users = c.execute("SELECT id, folder_path FROM users").fetchall()
+
+    for user in users:
+        count = c.execute(
+            "SELECT COUNT(*) FROM subjects WHERE user_id = ?",
+            (user["id"],)
+        ).fetchone()[0]
+
+        if count == 0:
+            for subject in DEFAULT_SUBJECTS:
+                c.execute(
+                    "INSERT OR IGNORE INTO subjects (user_id, name) VALUES (?, ?)",
+                    (user["id"], subject)
+                )
+                Path(os.path.join(user["folder_path"], subject)).mkdir(
+                    parents=True,
+                    exist_ok=True
+                )
+
+    conn.commit()
+    conn.close()
+
 # создание таблиц для новой бд
 
 def init_new_db():
@@ -85,7 +107,6 @@ def init_new_db():
 
     conn.commit()
 
-    # обратная совместимость для старых пользователей, люблю вас
     users = c.execute("SELECT id, folder_path FROM users").fetchall()
 
     for user in users:
@@ -109,11 +130,12 @@ def init_new_db():
     conn.close()
 
 
+
 def get_current_user():
     if "user_id" not in session:
         return None
 
-    conn = get_db()
+    conn = get_new_db()
     user = conn.execute(
         "SELECT * FROM users WHERE id = ?",
         (session["user_id"],)
@@ -131,7 +153,7 @@ def get_user_subjects():
     if "user_id" not in session:
         return []
 
-    conn = get_db()
+    conn = get_new_db()
     rows = conn.execute(
         "SELECT name FROM subjects WHERE user_id = ? ORDER BY id",
         (session["user_id"],)
@@ -355,7 +377,7 @@ def edit_subjects():
             flash("Введите корректное название предмета.", "error")
             return redirect(url_for("edit_subjects"))
 
-        conn = get_db()
+        conn = get_new_db()
 
         try:
             conn.execute(
@@ -413,7 +435,7 @@ def delete_subject():
         )
         return redirect(url_for("edit_subjects"))
 
-    conn = get_db()
+    conn = get_new_db()
 
     conn.execute(
         "DELETE FROM subjects WHERE user_id = ? AND name = ?",
