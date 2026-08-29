@@ -22,4 +22,4 @@ RUN mkdir -p uploads
 EXPOSE 5000
 
 # Запускаем приложение
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", "app:main"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", "main:app"]
