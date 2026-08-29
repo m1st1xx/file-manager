@@ -11,7 +11,7 @@ services:
       - /var/private/users.db:/app/users.db
       - /var/private/new_users.db:/app/new_users.db
     environment:
-      - FLASK_APP=app.py
+      - FLASK_APP=main.py
       - FLASK_ENV=production
   nginx:
     build: ./nginx
