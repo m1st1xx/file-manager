@@ -27,7 +27,7 @@ jobs:
 
       - name: Check Python syntax
         run: |
-          python -m py_compile app.py
+          python -m py_compile main.py
 
   deploy:
     needs: test
