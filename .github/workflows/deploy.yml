@@ -50,6 +50,6 @@ jobs:
             git fetch file-manager main
             git reset --hard file-manager/main
 
-             docker compose up -d --build --remove-orphans
+            sudo docker compose up -d --build --remove-orphans
 
-             docker image prune -f
+            sudo docker image prune -f
