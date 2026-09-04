@@ -44,7 +44,7 @@ jobs:
           script: |
             set -e
 
-            cd /home/ubuntu/myfiles-kai
+            cd ${{ secrets.PROJECT_PATH }}
 
             git fetch file-manager main
             git reset --hard file-manager/main
