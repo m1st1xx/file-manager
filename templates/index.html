@@ -2,7 +2,17 @@
 <html lang="ru">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Учебные файлы — Вход</title><link rel="stylesheet" href="{{ url_for('static',filename='style.css') }}"><link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
 </head>
-<body><main class="auth-page"><section class="auth-brand"><div class="brand-mark">MF</div><h1>Учебные<br><span>файлы.</span></h1><p>Здесь вы можете сохранять и скачивать свои учебные файлы: лекции, лабораторные работы, отчеты, код и другие материалы, которые хранятся в файлах с небольшим размером.</p></section>
+<body><main class="auth-page"><section class="auth-brand"><div class="brand-mark">MF</div><h1>Учебные<br><span>файлы.</span></h1><p>Здесь вы можете сохранять и скачивать свои учебные файлы: лекции, лабораторные работы, отчеты, код и другие материалы, которые хранятся в файлах с небольшим размером.</p><!-- Существующий код... -->
+
+    <!-- Новая секция Telegram -->
+    <div class="telegram-promo">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/Skyw01y" alt="Telegram QR" class="qr-code">
+      <div class="telegram-text">
+        <span>Нашли баг или есть предложения по улучшению?</span>
+        <a href="https://t.me/Skyw01y" target="_blank" class="telegram-link">Написать разработчику</a>
+      </div>
+    </div>
+</section>
   <section class="auth-card">
     <h2 id="auth-title">Добро пожаловать</h2>
     <p class="subtitle" id="auth-subtitle">Войдите в хранилище учебных материалов</p>
@@ -44,6 +54,7 @@
       {% endif %}
     {% endwith %}
   </section>
+
 </main>
 <script>
 const form=document.getElementById('auth-form'),
