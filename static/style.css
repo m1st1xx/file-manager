@@ -542,3 +542,84 @@ a { color: inherit; text-decoration: none; }
   pointer-events: none;
   display: block;
 }
+
+/* ---------- Telegram Promo ---------- */
+.telegram-promo {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-top: 36px;
+  padding: 20px;
+  background: rgba(17, 20, 27, .88);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(18px);
+  width: fit-content;
+}
+
+/* Специфичные стили для главной страницы (растягивание на 2 колонки) */
+.telegram-promo.main-promo {
+  grid-column: 1 / -1;
+  width: 100%;
+  margin-top: 6px;
+  background: linear-gradient(145deg, rgba(255,255,255,000), transparent 65%), var(--panel);
+}
+
+.telegram-promo .qr-code {
+  width: 200px;
+  height: 200px;
+  border-radius: 10px;
+  background: #ffffff; /* Белый фон обязателен для корректного считывания QR-кода телефонами */
+  padding: 4px;
+  flex-shrink: 0;
+}
+
+.telegram-text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.telegram-text span {
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+  max-width: 280px;
+}
+
+.telegram-promo.main-promo .telegram-text span {
+  max-width: none;
+}
+
+.telegram-link {
+  display: inline-block;
+  color: white;
+  background: var(--accent);
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  transition: transform .2s ease, background .2s ease;
+  text-align: center;
+  width: fit-content;
+}
+
+.telegram-link:hover {
+  background: var(--accent-hover);
+  transform: translateY(-2px);
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 700px) {
+  .telegram-promo {
+    flex-direction: column;
+    text-align: center;
+    align-items: center;
+    width: 100%;
+  }
+
+  .telegram-link {
+    width: 100%;
+  }
+}
