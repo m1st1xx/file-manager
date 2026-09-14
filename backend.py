@@ -9,18 +9,68 @@ from dotenv import load_dotenv
 from os import getenv
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename
-from database import get_db,get_new_db
+from database import get_db, get_new_db, init_db, init_new_db
 
 app = Flask(__name__)
 
 load_dotenv()
-TOKEN=getenv("TOKEN")
+TOKEN = getenv("TOKEN")
 app.secret_key = TOKEN
 
 UPLOAD_BASE = "uploads"
 DEFAULT_SUBJECTS = ["ПОКС", "ОППиФКС", "ЭОСИ", "АСОС", "ОАКС", "ИКГ", "МПС"]
 
+# Автоматическая инициализация баз данных при запуске
+init_db()
+init_new_db()
 
+
+# Вспомогательные функции групп
+
+def generate_group_code():
+    """Генерация уникального 10-значного ID группы"""
+    conn = get_new_db()
+    chars = string.ascii_letters + string.digits
+    while True:
+        code = "".join(random.choices(chars, k=10))
+        exists = conn.execute("SELECT 1 FROM groups WHERE group_code = ?", (code,)).fetchone()
+        if not exists:
+            conn.close()
+            return code
+
+def get_user_groups(user_id):
+    """Получить список всех групп, в которых состоит пользователь"""
+    conn = get_new_db()
+    rows = conn.execute(
+        """SELECT g.id, g.group_code, g.name, g.created_by, gm.is_admin
+           FROM groups g
+           JOIN group_members gm ON g.id = gm.group_id
+           WHERE gm.user_id = ?
+           ORDER BY g.id DESC""",
+        (user_id,)
+    ).fetchall()
+    conn.close()
+    return [dict(row) for row in rows]
+
+def is_group_member(group_id, user_id):
+    """Проверка, является ли пользователь участником группы"""
+    conn = get_new_db()
+    row = conn.execute(
+        "SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, user_id)
+    ).fetchone()
+    conn.close()
+    return row is not None
+
+def is_group_admin(group_id, user_id):
+    """Проверка, является ли пользователь администратором группы"""
+    conn = get_new_db()
+    row = conn.execute(
+        "SELECT is_admin FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group_id, user_id)
+    ).fetchone()
+    conn.close()
+    return row and row["is_admin"] == 1
 
 
 def get_current_user():
@@ -65,7 +115,6 @@ def clean_subject_name(name):
     if not name or len(name) > 100:
         return None
 
-    # Запрет символов, которые могут превратить название в путь.
     if "/" in name or "\\" in name or "\x00" in name:
         return None
 
@@ -76,14 +125,13 @@ def create_subject_folder(subject):
     user_folder = get_user_folder()
 
     if user_folder:
-        Path(os.path.join(user_folder, subject)).mkdir(parents=True,exist_ok=True)
+        Path(os.path.join(user_folder, subject)).mkdir(parents=True, exist_ok=True)
 
 
 @app.route("/")
 def index():
     return render_template("index.html")
 
-# новая форма регистрации
 
 @app.route("/register", methods=["POST"])
 def register():
@@ -125,13 +173,12 @@ def register():
 
     except sqlite3.IntegrityError:
         flash(
-            "Пользователь с таким именем и фамилией уже существует.",
+            "Пользователь с таким именем уже существует.",
             "error"
         )
 
     return redirect(url_for("index"))
 
-#новые поля для логина
 
 @app.route("/login", methods=["POST"])
 def login():
@@ -161,7 +208,6 @@ def login():
     flash("Неверные данные", "error")
     return redirect(url_for("index"))
 
-# добавлена функция входа старым способом
 
 @app.route("/old_login", methods=["POST"])
 def old_login():
@@ -195,34 +241,35 @@ def old_login():
     flash("Неверные данные", "error")
     return redirect(url_for("index"))
 
-# новая страница сюда редиректит пользователя если он вошел старым способом
 
 @app.route("/set_username", methods=["GET","POST"])
 def set_username():
     if "user_id" not in session:
         flash("Сначала войдите!", "error")
         return redirect(url_for("index"))
+
     if request.method == "GET":
         return render_template("set_username.html")
 
-
-    username=request.form["username"].strip()
+    username = request.form["username"].strip()
     conn = get_db()
-    password_row = conn.execute("""SELECT password_hash FROM users
-           WHERE first_name = ? AND last_name = ? """,
-        (session['first_name'], session['last_name'])).fetchone()
+    password_row = conn.execute(
+        """SELECT password_hash FROM users WHERE first_name = ? AND last_name = ? """,
+        (session['first_name'], session['last_name'])
+    ).fetchone()
 
-
-    folder_row= conn.execute("""SELECT folder_path FROM users
-           WHERE first_name = ? AND last_name = ? """,
-        (session['first_name'], session['last_name'])).fetchone()
+    folder_row = conn.execute(
+        """SELECT folder_path FROM users WHERE first_name = ? AND last_name = ? """,
+        (session['first_name'], session['last_name'])
+    ).fetchone()
     conn.close()
 
-    password_hash=password_row["password_hash"]
-    folder_path= folder_row["folder_path"]
+    password_hash = password_row["password_hash"]
+    folder_path = folder_row["folder_path"]
 
     conn = get_new_db()
-    conn.execute(
+    cursor = conn.cursor()
+    cursor.execute(
         """INSERT INTO users
            (username, password_hash, folder_path)
            VALUES (?, ?, ?)""",
@@ -233,13 +280,13 @@ def set_username():
         )
     )
     conn.commit()
+    new_user_id = cursor.lastrowid
     conn.close()
-    session["user"]= username
+
+    session["user_id"] = new_user_id
+    session["user"] = username
     flash("Имя пользователя успешно обновлено!", "success")
     return redirect(url_for("main"))
-
-
-
 
 
 @app.route("/main")
@@ -251,7 +298,254 @@ def main():
     if not get_user_subjects():
         return redirect(url_for("edit_subjects"))
 
-    return render_template("main.html")
+    user_groups = get_user_groups(session["user_id"])
+    return render_template("main.html", user_groups=user_groups)
+
+
+@app.route("/create_group", methods=["POST"])
+def create_group():
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    group_name = clean_subject_name(request.form.get("name", ""))
+    if not group_name:
+        flash("Введите корректное название группы.", "error")
+        return redirect(url_for("main"))
+
+    group_code = generate_group_code()
+    group_folder = os.path.join(UPLOAD_BASE, "groups", group_code)
+
+    Path(group_folder).mkdir(parents=True, exist_ok=True)
+
+    conn = get_new_db()
+    cursor = conn.cursor()
+    cursor.execute(
+        "INSERT INTO groups (group_code, name, created_by, folder_path) VALUES (?, ?, ?, ?)",
+        (group_code, group_name, session["user_id"], group_folder)
+    )
+    group_id = cursor.lastrowid
+
+    cursor.execute(
+        "INSERT INTO group_members (group_id, user_id, is_admin) VALUES (?, ?, 1)",
+        (group_id, session["user_id"])
+    )
+    conn.commit()
+    conn.close()
+
+    flash(f"Группа «{group_name}» создана! ID группы: {group_code}", "success")
+    return redirect(url_for("group_page", group_id=group_id))
+
+
+@app.route("/join_group", methods=["POST"])
+def join_group():
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    group_code = request.form.get("group_code", "").strip()
+
+    if not group_code or len(group_code) != 10:
+        flash("Введите правильный 10-значный ID группы.", "error")
+        return redirect(url_for("main"))
+
+    conn = get_new_db()
+    group = conn.execute(
+        "SELECT * FROM groups WHERE group_code = ?",
+        (group_code,)
+    ).fetchone()
+
+    if not group:
+        conn.close()
+        flash("Группа с таким ID не найдена.", "error")
+        return redirect(url_for("main"))
+
+    already_member = conn.execute(
+        "SELECT 1 FROM group_members WHERE group_id = ? AND user_id = ?",
+        (group["id"], session["user_id"])
+    ).fetchone()
+
+    if already_member:
+        conn.close()
+        flash("Вы уже состоите в этой группе.", "error")
+        return redirect(url_for("group_page", group_id=group["id"]))
+
+    conn.execute(
+        "INSERT INTO group_members (group_id, user_id, is_admin) VALUES (?, ?, 0)",
+        (group["id"], session["user_id"])
+    )
+    conn.commit()
+    conn.close()
+
+    flash(f"Вы присоединились к группе «{group['name']}»!", "success")
+    return redirect(url_for("group_page", group_id=group["id"]))
+
+
+@app.route("/group/<int:group_id>")
+def group_page(group_id):
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    if not is_group_member(group_id, session["user_id"]):
+        flash("У вас нет доступа к этой группе.", "error")
+        return redirect(url_for("main"))
+
+    conn = get_new_db()
+    group = conn.execute("SELECT * FROM groups WHERE id = ?", (group_id,)).fetchone()
+
+    if not group:
+        conn.close()
+        flash("Группа не найдена.", "error")
+        return redirect(url_for("main"))
+
+    is_admin = is_group_admin(group_id, session["user_id"])
+
+    members = []
+    if is_admin:
+        members = conn.execute(
+            """SELECT u.id, u.username, gm.is_admin
+               FROM users u
+               JOIN group_members gm ON u.id = gm.user_id
+               WHERE gm.group_id = ?""",
+            (group_id,)
+        ).fetchall()
+
+    conn.close()
+
+    group_folder = group["folder_path"]
+    Path(group_folder).mkdir(parents=True, exist_ok=True)
+    files = [f for f in os.listdir(group_folder) if os.path.isfile(os.path.join(group_folder, f))]
+
+    return render_template(
+        "group.html",
+        group=group,
+        is_admin=is_admin,
+        files=files,
+        members=members
+    )
+
+
+@app.route("/group/<int:group_id>/upload", methods=["POST"])
+def group_upload_file(group_id):
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    if not is_group_admin(group_id, session["user_id"]):
+        flash("Только администраторы группы могут загружать файлы.", "error")
+        return redirect(url_for("group_page", group_id=group_id))
+
+    conn = get_new_db()
+    group = conn.execute("SELECT * FROM groups WHERE id = ?", (group_id,)).fetchone()
+    conn.close()
+
+    if not group:
+        flash("Группа не найдена.", "error")
+        return redirect(url_for("main"))
+
+    if "file" not in request.files:
+        flash("Файл не выбран.", "error")
+        return redirect(url_for("group_page", group_id=group_id))
+
+    file = request.files["file"]
+    if not file.filename:
+        flash("Файл не выбран.", "error")
+        return redirect(url_for("group_page", group_id=group_id))
+
+    filename = secure_filename(file.filename)
+    if not filename:
+        flash("Некорректное имя файла.", "error")
+        return redirect(url_for("group_page", group_id=group_id))
+
+    file.save(os.path.join(group["folder_path"], filename))
+
+    flash("Файл успешно загружен в группу!", "success")
+    return redirect(url_for("group_page", group_id=group_id))
+
+
+@app.route("/group/<int:group_id>/download/<path:filename>")
+def group_download_file(group_id, filename):
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    if not is_group_member(group_id, session["user_id"]):
+        return "НЕТ ДОСТУПА", 403
+
+    conn = get_new_db()
+    group = conn.execute("SELECT * FROM groups WHERE id = ?", (group_id,)).fetchone()
+    conn.close()
+
+    if not group:
+        return "ГРУППА НЕ НАЙДЕНА", 404
+
+    filename = unquote(filename)
+    group_folder = os.path.abspath(group["folder_path"])
+    file_path = os.path.abspath(os.path.join(group_folder, filename))
+
+    if not file_path.startswith(group_folder + os.sep):
+        return "НЕКОРРЕКТНЫЙ ФАЙЛ", 400
+
+    if not os.path.isfile(file_path):
+        return "ФАЙЛ НЕ НАЙДЕН", 404
+
+    return send_from_directory(group_folder, filename, as_attachment=True)
+
+
+@app.route("/group/<int:group_id>/delete_file/<path:filename>", methods=["POST"])
+def group_delete_file(group_id, filename):
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    if not is_group_admin(group_id, session["user_id"]):
+        flash("Только администраторы могут удалять файлы.", "error")
+        return redirect(url_for("group_page", group_id=group_id))
+
+    conn = get_new_db()
+    group = conn.execute("SELECT * FROM groups WHERE id = ?", (group_id,)).fetchone()
+    conn.close()
+
+    if not group:
+        flash("Группа не найдена.", "error")
+        return redirect(url_for("main"))
+
+    filename = unquote(filename)
+    group_folder = os.path.abspath(group["folder_path"])
+    file_path = os.path.abspath(os.path.join(group_folder, filename))
+
+    if not file_path.startswith(group_folder + os.sep):
+        return "НЕКОРРЕКТНЫЙ ФАЙЛ", 400
+
+    if os.path.isfile(file_path):
+        os.remove(file_path)
+        flash(f"Файл '{filename}' удалён из группы.", "success")
+    else:
+        flash("Файл не найден.", "error")
+
+    return redirect(url_for("group_page", group_id=group_id))
+
+
+@app.route("/group/<int:group_id>/assign_admin", methods=["POST"])
+def assign_admin(group_id):
+    if "user_id" not in session:
+        return redirect(url_for("index"))
+
+    if not is_group_admin(group_id, session["user_id"]):
+        flash("У вас нет прав администратора.", "error")
+        return redirect(url_for("group_page", group_id=group_id))
+
+    user_ids = request.form.getlist("user_ids")
+    if not user_ids:
+        flash("Не выбрано ни одного участника.", "error")
+        return redirect(url_for("group_page", group_id=group_id))
+
+    conn = get_new_db()
+    for uid in user_ids:
+        conn.execute(
+            "UPDATE group_members SET is_admin = 1 WHERE group_id = ? AND user_id = ?",
+            (group_id, uid)
+        )
+    conn.commit()
+    conn.close()
+
+    flash("Выбранные участники успешно назначены администраторами!", "success")
+    return redirect(url_for("group_page", group_id=group_id))
 
 
 @app.route("/subjects", methods=["GET", "POST"])
@@ -318,7 +612,6 @@ def delete_subject():
     user_folder = get_user_folder()
     subject_path = os.path.join(user_folder, subject)
 
-    # Не удаляем предмет, если в его папке есть файлы.
     if os.path.isdir(subject_path) and os.listdir(subject_path):
         flash(
             "Нельзя удалить предмет, пока в его папке есть файлы. "
@@ -445,7 +738,7 @@ def subject_files(subject, mode):
     )
 
 
-@app.route("/delete_file/<path:subject>/<path:filename>",methods=["POST"])
+@app.route("/delete_file/<path:subject>/<path:filename>", methods=["POST"])
 def delete_file(subject, filename):
     if "user_id" not in session:
         return redirect(url_for("index"))
@@ -576,5 +869,3 @@ def inject_subjects():
 def logout():
     session.clear()
     return redirect(url_for("index"))
-
-

@@ -94,6 +94,32 @@ def init_new_db():
         )"""
     )
 
+
+    # НОВЫЙ БЛОК: Таблицы для функционала групп
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS groups (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            group_code TEXT UNIQUE NOT NULL,
+            name TEXT NOT NULL,
+            created_by INTEGER NOT NULL,
+            folder_path TEXT NOT NULL,
+            FOREIGN KEY(created_by) REFERENCES users(id) ON DELETE CASCADE
+        )"""
+    )
+
+    c.execute(
+        """CREATE TABLE IF NOT EXISTS group_members (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            group_id INTEGER NOT NULL,
+            user_id INTEGER NOT NULL,
+            is_admin INTEGER NOT NULL DEFAULT 0,
+            UNIQUE(group_id, user_id),
+            FOREIGN KEY(group_id) REFERENCES groups(id) ON DELETE CASCADE,
+            FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+        )"""
+    )
+
     conn.commit()
 
     users = c.execute("SELECT id, folder_path FROM users").fetchall()
