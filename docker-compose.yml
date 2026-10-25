@@ -1,10 +1,9 @@
 services:
+
   file-manager:
     build: .
     container_name: file-manager
     env_file: .env
-    ports:
-      - "5000:5000"
     restart: always
     volumes:
       - /var/private/uploads:/app/uploads
@@ -13,19 +12,28 @@ services:
     environment:
       - FLASK_APP=main.py
       - FLASK_ENV=production
-  nginx:
-    build: ./nginx
-    container_name: nginx
-    volumes:
-      - /var/private/myfiles-kai.ru/ssl:/etc/letsencrypt
-      - certbot-var:/var/lib/letsencrypt
-      - webroot:/var/www/certbot
-    depends_on:
+    networks:
+      - proxy
       - file-manager
-    ports:
-      - "80:80"
-      - "443:443"
-    restart: always
+#  nginx:
+ #   build: ./nginx
+  #  container_name: nginx
+   # volumes:
+    #  - /var/private/myfiles-kai.ru/ssl:/etc/letsencrypt
+     # - certbot-var:/var/lib/letsencrypt
+      #- webroot:/var/www/certbot
+   # depends_on:
+      #- file-manager
+   # ports:
+    #  - "80:80"
+    #  - "443:443"
+    # restart: always
 volumes:
   certbot-var:
   webroot:
+networks:
+  proxy:
+    external: true
+  file-manager:
+
+
