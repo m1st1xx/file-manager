@@ -27,7 +27,16 @@ jobs:
 
       - name: Check Python syntax
         run: |
-          python -m py_compile main.py
+          python -m compileall -q services migration
+
+      - name: Check nginx gateway config
+        run: |
+          docker run --rm \
+            --add-host auth-service:127.0.0.1 \
+            --add-host web-service:127.0.0.1 \
+            --add-host files-service:127.0.0.1 \
+            -v "$PWD/gateway/nginx.conf:/etc/nginx/nginx.conf:ro" \
+            nginx:1.27-alpine nginx -t
 
   deploy:
     needs: test

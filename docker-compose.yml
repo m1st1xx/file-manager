@@ -1,39 +1,96 @@
+x-python-service: &python-service
+  build: .
+  env_file: .env
+  restart: always
+  environment: &python-env
+    DATABASE_URL: postgresql://${POSTGRES_USER:-filemanager}:${POSTGRES_PASSWORD:?задайте POSTGRES_PASSWORD в .env}@postgres:5432/${POSTGRES_DB:-filemanager}
+    FILES_SERVICE_URL: http://files-service:5000
+  networks:
+    - file-manager
+
 services:
 
-  file-manager:
-    build: .
+  # Единая точка входа. Имя и порт как у старого монолита (file-manager:5000),
+  # поэтому внешний nginx в сети proxy менять не нужно.
+  gateway:
+    build:
+      context: .
+      dockerfile: gateway/dockerfile
     container_name: file-manager
-    env_file: .env
     restart: always
-    volumes:
-      - /var/private/uploads:/app/uploads
-      - /var/private/users.db:/app/users.db
-      - /var/private/new_users.db:/app/new_users.db
-    environment:
-      - FLASK_APP=main.py
-      - FLASK_ENV=production
+    depends_on:
+      - auth-service
+      - web-service
+      - files-service
     networks:
       - proxy
       - file-manager
-#  nginx:
- #   build: ./nginx
-  #  container_name: nginx
-   # volumes:
-    #  - /var/private/myfiles-kai.ru/ssl:/etc/letsencrypt
-     # - certbot-var:/var/lib/letsencrypt
-      #- webroot:/var/www/certbot
-   # depends_on:
-      #- file-manager
-   # ports:
-    #  - "80:80"
-    #  - "443:443"
-    # restart: always
-volumes:
-  certbot-var:
-  webroot:
+
+  auth-service:
+    <<: *python-service
+    container_name: file-manager-auth
+    environment:
+      <<: *python-env
+      SERVICE: auth
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  web-service:
+    <<: *python-service
+    container_name: file-manager-web
+    environment:
+      <<: *python-env
+      SERVICE: web
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  files-service:
+    <<: *python-service
+    container_name: file-manager-files
+    environment:
+      <<: *python-env
+      SERVICE: files
+    volumes:
+      - /var/private/uploads:/app/uploads
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  # Однократный перенос данных из SQLite в PostgreSQL.
+  # При последующих запусках сразу завершается (перенос уже выполнен).
+  migrate:
+    <<: *python-service
+    container_name: file-manager-migrate
+    restart: "no"
+    command: python -m migration.migrate_sqlite_to_postgres --old-db /sqlite/users.db --new-db /sqlite/new_users.db
+    volumes:
+      - /var/private/users.db:/sqlite/users.db:ro
+      - /var/private/new_users.db:/sqlite/new_users.db:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: file-manager-postgres
+    restart: always
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-filemanager}
+      POSTGRES_USER: ${POSTGRES_USER:-filemanager}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?задайте POSTGRES_PASSWORD в .env}
+    volumes:
+      - /var/private/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - file-manager
+
 networks:
   proxy:
     external: true
   file-manager:
-
-

@@ -40,74 +40,6 @@
         <button onclick="location.href='{{url_for('upload_select')}}'">Выбрать предмет →</button>
     </div>
 
-    <!-- ========================================== -->
-    <!-- НОВЫЙ БЛОК: Панель "Мои группы"             -->
-    <!-- ========================================== -->
-    <div class="groups-section">
-        <div class="groups-header">
-            <h2>Мои группы</h2>
-            <div class="groups-actions">
-                <button type="button" class="btn-group-action" onclick="toggleGroupForm('create')">+ Создать группу</button>
-                <button type="button" class="btn-group-action secondary" onclick="toggleGroupForm('join')">Присоединиться к группе</button>
-            </div>
-        </div>
-
-        <!-- Форма создания группы -->
-        <div id="create-group-form" class="group-form-container hidden">
-            <form action="{{ url_for('create_group') }}" method="POST" class="form-inline">
-                <h3>Создание группы</h3>
-                <input type="text" name="name" placeholder="Введите название группы" required maxlength="100">
-                <div class="form-buttons">
-                    <button type="submit">Создать</button>
-                    <button type="button" class="cancel-button" onclick="toggleGroupForm('create')">Отмена</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Форма присоединения к группе -->
-        <div id="join-group-form" class="group-form-container hidden">
-            <form action="{{ url_for('join_group') }}" method="POST" class="form-inline">
-                <h3>Присоединиться к группе</h3>
-                <input type="text" name="group_code" placeholder="Введите 10-значный ID группы" required minlength="10" maxlength="10">
-                <div class="form-buttons">
-                    <button type="submit">Присоединиться</button>
-                    <button type="button" class="cancel-button" onclick="toggleGroupForm('join')">Отмена</button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Список групп пользователя или приглашение вступить -->
-        <div class="groups-content">
-            {% if not user_groups %}
-                <div class="no-groups-card">
-                    <p>вы не состоите ни в одной из групп, не хотите создать или добавиться?</p>
-                </div>
-            {% else %}
-                <div class="groups-grid">
-                    {% for group in user_groups %}
-                        <a href="{{ url_for('group_page', group_id=group.id) }}" class="group-card">
-                            <div class="group-card-header">
-                                <span class="group-title">{{ group.name }}</span>
-                                {% if group.is_admin %}
-                                    <span class="badge admin">Админ</span>
-                                {% else %}
-                                    <span class="badge member">Участник</span>
-                                {% endif %}
-                            </div>
-                            <div class="group-card-footer">
-                                <span class="group-code-label">ID: <code>{{ group.group_code }}</code></span>
-                                <span class="group-arrow">→</span>
-                            </div>
-                        </a>
-                    {% endfor %}
-                </div>
-            {% endif %}
-        </div>
-    </div>
-    <!-- ========================================== -->
-    <!-- КОНЕЦ БЛОКА ГРУПП                          -->
-    <!-- ========================================== -->
-
     <div class="telegram-promo main-promo">
       <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://t.me/Skyw01y" alt="Telegram QR" class="qr-code">
       <div class="telegram-text">
@@ -117,26 +49,5 @@
     </div>
 </div>
 
-<!-- JS-скрипт переключения форм -->
-<script>
-function toggleGroupForm(type) {
-    const createForm = document.getElementById('create-group-form');
-    const joinForm = document.getElementById('join-group-form');
-
-    if (type === 'create') {
-        joinForm.classList.add('hidden');
-        createForm.classList.toggle('hidden');
-        if (!createForm.classList.contains('hidden')) {
-            createForm.querySelector('input').focus();
-        }
-    } else if (type === 'join') {
-        createForm.classList.add('hidden');
-        joinForm.classList.toggle('hidden');
-        if (!joinForm.classList.contains('hidden')) {
-            joinForm.querySelector('input').focus();
-        }
-    }
-}
-</script>
 </body>
 </html>
