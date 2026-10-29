@@ -1,25 +1,22 @@
-# Используем официальный образ Python
+# Общий образ для всех Python-микросервисов (auth, web, files) и миграции.
+# Какой сервис запускать, задаётся переменной SERVICE в docker-compose.yml.
 FROM python:3.11-slim
 
-# Устанавливаем зависимости ОС (на всякий случай)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    && rm -rf /var/lib/apt/lists/*
-
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем зависимости
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Копируем всё приложение
-COPY . .
+COPY services ./services
+COPY migration ./migration
+COPY templates ./templates
+COPY static ./static
 
-# Создаём папку для загрузок (на случай, если её нет)
 RUN mkdir -p uploads
 
-# Открываем порт
+ENV PYTHONUNBUFFERED=1 \
+    SERVICE=web
+
 EXPOSE 5000
 
-# Запускаем приложение
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "--timeout", "120", "main:app"]
+CMD gunicorn --bind 0.0.0.0:5000 --workers 2 --threads 4 --timeout 120 "services.${SERVICE}.app:app"

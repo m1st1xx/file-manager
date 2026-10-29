@@ -144,13 +144,14 @@ Telegram-бот является дополнительной частью эк�
 |------------|------------|
 | 🐍 **Python** | Основной язык проекта |
 | 🌐 **Flask** | Backend и web-приложение |
-| 🗄 **SQLite** | Хранение данных пользователей |
+| 🗄 **PostgreSQL** | Хранение данных пользователей |
+| 🐘 **psycopg 3** | Драйвер PostgreSQL и пул соединений |
 | 🔐 **Werkzeug** | Хеширование паролей |
 | 🎨 **HTML / CSS / JavaScript** | Frontend |
 | 🐳 **Docker** | Контейнеризация |
 | 🧩 **Docker Compose** | Управление сервисами |
 | ⚡ **Gunicorn** | Production WSGI-сервер |
-| 🌍 **Nginx** | Reverse proxy |
+| 🌍 **Nginx** | Reverse proxy и API-gateway микросервисов |
 | 🔒 **Let's Encrypt** | HTTPS-сертификаты |
 | 🤖 **aiogram** | Telegram-бот |
 
@@ -158,73 +159,71 @@ Telegram-бот является дополнительной частью эк�
 
 # 🏗 Архитектура
 
-Проект состоит из нескольких основных компонентов.
+Приложение разделено на микросервисы. Каждый сервис — отдельный контейнер
+с Flask + Gunicorn, владеет только своими данными и своей схемой в PostgreSQL.
 
 ```text
-                         Internet
-                            │
-                            ▼
-                    ┌───────────────┐
-                    │     Nginx     │
-                    │ Reverse Proxy │
-                    └───────┬───────┘
-                            │
-                            ▼
-                    ┌───────────────┐
-                    │    Flask      │
-                    │   + Gunicorn  │
-                    └───────┬───────┘
-                            │
-                 ┌──────────┴──────────┐
-                 │                     │
-                 ▼                     ▼
-          ┌──────────────┐      ┌──────────────┐
-          │   SQLite DB  │      │    Uploads   │
-          │    users.db  │      │    files     │
-          └──────────────┘      └──────────────┘
+                    Internet
+                       │
+                       ▼
+           Внешний Nginx (HTTPS, сеть proxy)
+                       │  http://file-manager:5000
+                       ▼
+             gateway (nginx + /static)
+         ┌─────────────┼──────────────┐
+         ▼             ▼              ▼
+   auth-service    web-service    files-service ──► uploads/
+         │             │              ▲    │
+         │             └─ /internal ──┤    │
+         └──────────── /internal ─────┘    │
+         │                                 │
+         ▼                                 ▼
+   PostgreSQL: схема auth           PostgreSQL: схема files
 ```
 
-Nginx принимает внешние HTTP/HTTPS-запросы и передаёт запросы приложению.
+| Сервис | Отвечает за | Маршруты | Данные |
+|--------|-------------|----------|--------|
+| **gateway** | единая точка входа, раздача статики | все | — |
+| **auth-service** | регистрация, вход, старый вход, выбор имени пользователя, сброс пароля, выход | `/`, `/register`, `/login`, `/old_login`, `/set_username`, `/reset_password`, `/logout` | `auth.users`, `auth.legacy_users`, `auth.legacy_subjects` |
+| **web-service** | главная страница | `/main` | — |
+| **files-service** | предметы, загрузка, скачивание и удаление файлов | `/subjects…`, `/upload…`, `/download…`, `/delete_file/…` | `files.storages`, `files.subjects`, папка `uploads/` |
+| **migrate** | однократный перенос данных из SQLite | — | — |
+| **postgres** | база данных | — | `/var/private/postgres` |
 
-Flask отвечает за:
-
-- авторизацию;
-- пользователей;
-- предметы;
-- работу с файлами;
-- страницы приложения.
-
-Gunicorn используется как production WSGI-сервер вместо встроенного Flask development server.
+- **Сессия** — подписанная cookie `fm_session`. Её создаёт auth-service, а остальные
+  сервисы проверяют общим секретом `TOKEN`.
+- **Межсервисное взаимодействие** идёт по HTTP через внутреннее API files-service
+  (`/internal/*`, заголовок `X-Internal-Token`). Через gateway это API наружу не доступно.
+- **Общие шаблоны.** Шаблоны в `templates/` общие. Карта всех маршрутов лежит в
+  `services/common/web.py`, поэтому `url_for(...)` работает в любом сервисе.
 
 ---
 
 # 📂 Структура проекта
 
-Основная структура проекта:
-
 ```text
 file-manager/
 │
-├── app.py
-├── Dockerfile
+├── dockerfile                 # общий образ Python-сервисов
 ├── docker-compose.yml
 ├── requirements.txt
 │
+├── gateway/                   # nginx-gateway (контейнер file-manager:5000)
+│   ├── dockerfile
+│   └── nginx.conf
+│
+├── services/
+│   ├── common/                # конфиг, БД, сессия, карта маршрутов, имена файлов
+│   ├── auth/                  # auth-service  (app.py, schema.sql)
+│   ├── web/                   # web-service   (app.py)
+│   └── files/                 # files-service (app.py, schema.sql)
+│
+├── migration/
+│   └── migrate_sqlite_to_postgres.py
+│
 ├── templates/
-│   ├── index.html
-│   ├── main.html
-│   ├── subjects.html
-│   ├── select_subject.html
-│   ├── subject_files.html
-│   ├── reset_password.html
-│   └── set_username.html
-│
 ├── static/
-│   ├── style.css
-│   └── favicon.ico
-│
-├── nginx/
-│   └── ...
+├── nginx/                     # конфиг внешнего nginx (для справки)
 │
 └── .github/
     └── workflows/
@@ -282,49 +281,73 @@ docker compose logs -f
 
 # ⚙️ Конфигурация
 
-Конфигурационные параметры проекта задаются через переменные окружения.
+Параметры задаются в файле `.env` рядом с `docker-compose.yml`:
 
-Перед запуском production-окружения рекомендуется создать `.env` и указать необходимые параметры.
+| Переменная | Обязательна | Описание |
+|------------|-------------|----------|
+| `TOKEN` | да | секрет подписи сессий (общий для всех сервисов) |
+| `POSTGRES_PASSWORD` | да | пароль пользователя PostgreSQL (только латинские буквы и цифры: он подставляется в URL подключения) |
+| `POSTGRES_USER` | нет | пользователь PostgreSQL (по умолчанию `filemanager`) |
+| `POSTGRES_DB` | нет | имя базы (по умолчанию `filemanager`) |
+| `INTERNAL_TOKEN` | нет | токен межсервисного API (по умолчанию равен `TOKEN`) |
+
+Пример:
+
+```dotenv
+TOKEN=длинная-случайная-строка
+POSTGRES_PASSWORD=LatinLettersAndDigits123
+```
 
 > ⚠️ Не добавляйте `.env` с реальными секретами в Git.
-
-Добавьте его в `.gitignore`:
-
-```gitignore
-.env
-*.db
-__pycache__/
-```
 
 ---
 
 # 🔐 Production
 
-Для production рекомендуется использовать следующую схему:
-
 ```text
-Internet
-   │
-   ▼
- HTTPS :443
-   │
-   ▼
- Nginx
-   │
-   ▼
- Gunicorn
-   │
-   ▼
- Flask
+Internet ─► HTTPS :443 ─► внешний Nginx ─► gateway (file-manager:5000) ─► микросервисы (Gunicorn + Flask)
 ```
 
-Запуск приложения выполняется через Gunicorn:
+Gateway называется `file-manager` и слушает порт `5000` в сети `proxy`,
+так же как раньше монолит, поэтому конфиг внешнего nginx менять не нужно.
+
+---
+
+# 🔁 Переход с монолита (SQLite → PostgreSQL)
+
+При первом `docker compose up -d --build` контейнер `migrate` переносит данные из
+`/var/private/users.db` и `/var/private/new_users.db` в PostgreSQL, и только после
+этого запускаются сервисы. Порядок такой:
+
+1. Пользователи из `new_users.db` сохраняют свои `id`, имена, хеши паролей, папки и
+   предметы. Пароли остаются прежними.
+2. Старые аккаунты из `users.db` переносятся в `auth.legacy_users`. «Вход старым
+   способом» продолжает работать. Если для старого аккаунта уже выбрано имя
+   пользователя, вход сразу открывает этот аккаунт.
+3. В старой базе у `username` не было `UNIQUE`, поэтому могли появиться дубликаты.
+   Имя сохраняет запись с наименьшим `id` (в неё и выполнялся вход). Остальные
+   получают имя вида `имя_<id>`. Список переименований есть в логе и в таблице
+   `public.sqlite_import`.
+4. Группы (`groups`, `group_members`) не переносятся.
+
+Перенос выполняется в одной транзакции и только один раз: при следующих запусках
+`migrate` сразу завершается. Файлы в `/var/private/uploads` не трогаются.
+SQLite-файлы монтируются только для чтения и остаются как резервная копия.
+
+Перед первым запуском рекомендуется сделать копию:
 
 ```bash
-gunicorn --bind 0.0.0.0:5000 app:app
+cp /var/private/users.db /var/private/new_users.db /var/private/backup/
 ```
 
-Docker-контейнер приложения использует Gunicorn вместо встроенного Flask-сервера.
+Посмотреть результат переноса:
+
+```bash
+docker compose logs migrate
+```
+
+> После перехода всем пользователям нужно один раз войти заново: cookie сессии
+> теперь называется по-другому.
 
 ---
 
@@ -378,31 +401,19 @@ Production Server
 
 # 💾 Хранение данных
 
-Пользовательские файлы и база данных должны храниться в Docker volumes или на стороне хоста.
+Данные хранятся на хосте и не пропадают при пересборке контейнеров:
 
-Это позволяет обновлять контейнер приложения без удаления пользовательских данных.
+| Что | Где на хосте | Кто использует |
+|-----|--------------|----------------|
+| база PostgreSQL | `/var/private/postgres` | postgres |
+| файлы пользователей | `/var/private/uploads` | files-service |
+| старые SQLite-базы (только чтение) | `/var/private/users.db`, `/var/private/new_users.db` | migrate |
 
-Принцип:
-
-```text
-Container
-   │
-   ├── Application
-   │
-   └── Backend
-        │
-        ├──────────────► users.db
-        │
-        └──────────────► uploads/
-```
-
-При пересборке Docker-образа:
+Резервная копия базы:
 
 ```bash
-docker compose up -d --build
+docker compose exec postgres pg_dump -U filemanager filemanager > backup.sql
 ```
-
-данные пользователей сохраняются.
 
 ---
 
