@@ -187,7 +187,6 @@ Telegram-бот является дополнительной частью эк�
 | **auth-service** | регистрация, вход, старый вход, выбор имени пользователя, сброс пароля, выход | `/`, `/register`, `/login`, `/old_login`, `/set_username`, `/reset_password`, `/logout` | `auth.users`, `auth.legacy_users`, `auth.legacy_subjects` |
 | **web-service** | главная страница | `/main` | — |
 | **files-service** | предметы, загрузка, скачивание и удаление файлов | `/subjects…`, `/upload…`, `/download…`, `/delete_file/…` | `files.storages`, `files.subjects`, папка `uploads/` |
-| **migrate** | однократный перенос данных из SQLite | — | — |
 | **postgres** | база данных | — | `/var/private/postgres` |
 
 - **Сессия** — подписанная cookie `fm_session`. Её создаёт auth-service, а остальные
@@ -217,9 +216,6 @@ file-manager/
 │   ├── auth/                  # auth-service  (app.py, schema.sql)
 │   ├── web/                   # web-service   (app.py)
 │   └── files/                 # files-service (app.py, schema.sql)
-│
-├── migration/
-│   └── migrate_sqlite_to_postgres.py
 │
 ├── templates/
 ├── static/
@@ -314,44 +310,6 @@ gateway — внутренний маршрутизатор только для 
 
 ---
 
-# 🔁 Переход с монолита (SQLite → PostgreSQL)
-
-При первом `docker compose up -d --build` контейнер `migrate` переносит данные из
-`/var/private/users.db` и `/var/private/new_users.db` в PostgreSQL, и только после
-этого запускаются сервисы. Порядок такой:
-
-1. Пользователи из `new_users.db` сохраняют свои `id`, имена, хеши паролей, папки и
-   предметы. Пароли остаются прежними.
-2. Старые аккаунты из `users.db` переносятся в `auth.legacy_users`. «Вход старым
-   способом» продолжает работать. Если для старого аккаунта уже выбрано имя
-   пользователя, вход сразу открывает этот аккаунт.
-3. В старой базе у `username` не было `UNIQUE`, поэтому могли появиться дубликаты.
-   Имя сохраняет запись с наименьшим `id` (в неё и выполнялся вход). Остальные
-   получают имя вида `имя_<id>`. Список переименований есть в логе и в таблице
-   `public.sqlite_import`.
-4. Группы (`groups`, `group_members`) не переносятся.
-
-Перенос выполняется в одной транзакции и только один раз: при следующих запусках
-`migrate` сразу завершается. Файлы в `/var/private/uploads` не трогаются.
-SQLite-файлы монтируются только для чтения и остаются как резервная копия.
-
-Перед первым запуском рекомендуется сделать копию:
-
-```bash
-cp /var/private/users.db /var/private/new_users.db /var/private/backup/
-```
-
-Посмотреть результат переноса:
-
-```bash
-docker compose logs migrate
-```
-
-> После перехода всем пользователям нужно один раз войти заново: cookie сессии
-> теперь называется по-другому.
-
----
-
 # 🔄 CI/CD
 
 Проект поддерживает автоматическое обновление сервера через GitHub Actions.
@@ -408,7 +366,6 @@ Production Server
 |-----|--------------|----------------|
 | база PostgreSQL | `/var/private/postgres` | postgres |
 | файлы пользователей | `/var/private/uploads` | files-service |
-| старые SQLite-базы (только чтение) | `/var/private/users.db`, `/var/private/new_users.db` | migrate |
 
 Резервная копия базы:
 

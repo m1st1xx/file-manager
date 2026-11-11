@@ -1,4 +1,4 @@
-# Общий образ для всех Python-микросервисов (auth, web, files) и миграции.
+# Общий образ для всех Python-микросервисов (auth, web, files).
 # Какой сервис запускать, задаётся переменной SERVICE в docker-compose.yml.
 FROM python:3.11-slim
 
@@ -8,7 +8,6 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 COPY services ./services
-COPY migration ./migration
 COPY templates ./templates
 COPY static ./static
 

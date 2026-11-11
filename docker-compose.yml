@@ -33,8 +33,8 @@ services:
       <<: *python-env
       SERVICE: auth
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
 
   web-service:
     <<: *python-service
@@ -43,8 +43,8 @@ services:
       <<: *python-env
       SERVICE: web
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      postgres:
+        condition: service_healthy
 
   files-service:
     <<: *python-service
@@ -54,20 +54,6 @@ services:
       SERVICE: files
     volumes:
       - /var/private/uploads:/app/uploads
-    depends_on:
-      migrate:
-        condition: service_completed_successfully
-
-  # Однократный перенос данных из SQLite в PostgreSQL.
-  # При последующих запусках сразу завершается (перенос уже выполнен).
-  migrate:
-    <<: *python-service
-    container_name: file-manager-migrate
-    restart: "no"
-    command: python -m migration.migrate_sqlite_to_postgres --old-db /sqlite/users.db --new-db /sqlite/new_users.db
-    volumes:
-      - /var/private/users.db:/sqlite/users.db:ro
-      - /var/private/new_users.db:/sqlite/new_users.db:ro
     depends_on:
       postgres:
         condition: service_healthy
