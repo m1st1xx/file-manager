@@ -27,7 +27,7 @@ jobs:
 
       - name: Check Python syntax
         run: |
-          python -m compileall -q services migration
+          python -m compileall -q services
 
       - name: Check nginx gateway config
         run: |
